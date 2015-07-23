@@ -130,8 +130,7 @@ ls -1 $SRCDIR/$BLOGDIR | while read file; do
 		echo "<li id="'"navbar"'"><a href="index.html">$BLOGDIR</a></li>" >> $DESTDIR/$BLOGDIR/$file.html
 		title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
 		date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
-		echo "<p id="'"postdate"'">$date -</p>" >> $DESTDIR/$BLOGDIR/index.html
-		echo "<li><a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+		echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
 		$MARKDOWN < $SRCDIR/$BLOGDIR/$file.md >> $DESTDIR/$BLOGDIR/$file.html
 		footer >> $DESTDIR/$BLOGDIR/$file.html
 	esac	
