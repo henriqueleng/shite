@@ -52,7 +52,7 @@ then
 	exit
 elif [ "$1" == "install" ]
 then
-	cp -R $DESTDIR $2
+	cp -R $DESTDIR/* $2
 	exit
 elif [ "$1" == "-h" ]
 then
