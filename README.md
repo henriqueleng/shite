@@ -7,7 +7,7 @@ henriquelengler.com
 It is made entirely posix shell + posix tools (sed, ls, wc, echo, cat
 ...), *if something fail in your system, please tell me*.
 
-The only extra tolls you will need is a markdown processor, that by
+The only extra tools you will need is a markdown processor, that by
 default is smu (https://github.com/Gottox/smu), and a text editor.
 
 I decided to make it because I thought it was simple to create one and even
@@ -35,14 +35,7 @@ To create a new post just run:
 
 It will ask by a title, create the file, put the actual date on it and
 open your editor, so you start writing.
-
-The title of each post need to be specifed in the first line with only one '#'. 
-The date comes bellow like this "## &mdash; 2015/07/22".
-Tha name should start with a number and end with '.md' to mean it is a
-markdown file.
-
-By now, the program will not recognize other standards, so to avoid
-errors use the command to create new posts.
+Use this command because it will generate the correct format.
 
 Then when you build, it will create a index in the $BLOGDIR with a list
 of all your posts.
@@ -66,28 +59,28 @@ To only clean and exit do:
 
 ### So, it will be something like this:
 
-sitebuild/
-├── build.sh
-├── README
-├── site.source
-│   ├── index.md
-│   ├── contact.md
-│   ├── style.css
-│   ├── ...
-│   └ blog/
-│     ├ 1-example-post.md
-│     ├ 2-bla.md
-│     └ ...
-│
-└── site.dest
-    ├ index.html
-	├ contact.html
-	├ style.css
-	└ blog/
-      ├ index.html (NEW, WITH A LIST OF POSTS)
-      ├ 1-example-post.md
-      ├ 2-bla.md
-      └ ...
+    sitebuild/
+    ├── build.sh
+    ├── README
+    ├── site.source
+    │   ├── index.md
+    │   ├── contact.md
+    │   ├── style.css
+    │   ├── ...
+    │   └ blog/
+    │     ├ 1-example-post.md
+    │     ├ 2-bla.md
+    │     └ ...
+    │
+    └── site.dest
+        ├ index.html
+    	├ contact.html
+    	├ style.css
+    	└ blog/
+          ├ index.html (NEW, WITH A LIST OF POSTS)
+          ├ 1-example-post.md
+          ├ 2-bla.md
+          └ ...
 
 ### Site style:
 
