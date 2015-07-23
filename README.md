@@ -51,6 +51,8 @@ To install the generated files type (it will copy the whole $DESTDIR to
 
     ./build && ./build install <PATH>
 
+You can work on github hosting by putting these files in a .foo/ dir and
+add it to the gitignore, then your <PATH> will be ../
 it will generate and copy the content of $DESTDIR to PATH.
 
 To only clean and exit do:
