@@ -1,24 +1,21 @@
-*{
-   margin:0;
-   padding:0;
-}
-
 body{
-   text-align:center;
+	text-align:center;
+	font-family: sans-serif;
 }
 
 #wrapper{
-   width:960px;
-   margin:0 auto;
-   text-align:left;
+	width:960px;
+	margin:0 auto;
+	text-align:left;
 }
 
 #navbar {
-    display: inline;
+	display: inline;
 	text-align: center;
 }
 
 footer {
-    text-align: right;
-    margin: auto;
+	text-align: right;
+	margin: auto;
+	padding: 90px;
 }

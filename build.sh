@@ -8,7 +8,7 @@ MARKDOWN=smu
 EDITOR=vim
 
 #### SITE INFO ####
-TITLE='Henrique Lengler'
+TITLE='Sample Title'
 SUBTITLE='Personal page'
 ###################
 
@@ -33,7 +33,7 @@ cat <<!__EOF__
 footer() {
 cat <<!__EOF__
     <footer>
-      <p>Hosted in <a href="https://github.com/henriqueleng/henriqueleng.github.io">Github</a>
+      <p>Hosted in <a href="http://www.github.com">Github</a>
     </footer>
 	</div>
   </body>
