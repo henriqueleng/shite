@@ -117,7 +117,7 @@ done
 # no need to check again
 if [ -d $SRCDIR/$BLOGDIR ]; then
 
-if [ -z "$(ls -1 $DIRECTORY)" ]; then
+if [ "$(ls -1 $SRCDIR/$BLOGDIR)" ]; then
 	:
 else
    echo "<p id="'"warn"'">No posts yet</p>" >> $DESTDIR/$BLOGDIR/index.html 
