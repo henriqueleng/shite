@@ -4,9 +4,9 @@ body{
 }
 
 #wrapper{
-	width:90%;
-	max-width:720px;
-	margin:auto;
+	width:70%;
+	height: 50%;
+	margin:0 auto;
 	text-align:left;
 }
 
