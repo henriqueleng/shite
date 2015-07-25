@@ -19,6 +19,7 @@ cat <<!__EOF__
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="$1">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
   </head>
   <body>
   <div id="wrapper">
@@ -81,6 +82,7 @@ clean
 mkdir $DESTDIR
 touch $DESTDIR/index.html
 cp $SRCDIR/$CSSFILE $DESTDIR
+cp $SRCDIR/favicon.ico $DESTDIR
 
 ls -1 $SRCDIR | while read file; do
 	if [ "$file" == "$BLOGDIR" ]; then
