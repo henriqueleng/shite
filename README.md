@@ -1,8 +1,8 @@
 # shite - posix shell, static site generator.
 *looking for a better name*
 
-This is a simple static-site generator made to build my persnal site:
-henriquelengler.com
+This is a simple static-site generator made to build my personal site:
+(henriquelengler.com)
 
 It is made entirely posix shell + posix tools (sed, ls, wc, echo, cat
 ...), *if something fail in your system, please tell me*.
@@ -16,14 +16,16 @@ with the style I want. Which is infinite simple pages + a blog.
 
 ## How it works
 Right know It is working in a very static way, you get the source, and
-start to write your site on the $SRCDIR directory.
+start to write your site on the $SRCDIR (by default site.source)
+directory, then build.sh will build your site to $DESTDIR (by default
+site.dest). *Obs.: change this variables on build.sh*
 You only need to care that $SRCDIR and $DESTDIR are in the same folder of the 
-build.sh script.
-Edit the functions header() and footer() to change the defaults.
-You write everything in markdown, infinite files in $SRCDIR and $BLOGDIR.
+build.sh script -- *TODO, make it work with folders in any location*.
 
-Each file in the main $SRCDIR will be linked in the navigation bar,
-and will be rendered as a simple page.
+Edit the functions header() and footer() to change the defaults, they
+will be in every page.
+
+Each file in the main dir will be linked in the navigation bar.
 
 ### The blog
 Each file in the $BLOGDIR will be listed in the $BLOGDIR/index.html that
@@ -34,10 +36,12 @@ To create a new post just run:
     ./build.sh post
 
 It will ask by a title, create the file, put the actual date on it and
-open your editor, so you start writing.
-Use this command because it will generate the correct format.
+open your editor (set by the $EDITOR enviroment variable).
 
-Then when you build, it will create a index in the $BLOGDIR with a list
+You should use this command to blogpost, because it will generate the 
+correct format and put all the infos shite needs.
+
+Then build it, it will create a index in the $BLOGDIR with a list
 of all your posts.
 
 To build the whole site type:
@@ -74,7 +78,7 @@ To only clean and exit do:
     │     ├ 2-bla.md
     │     └ ...
     │
-    └── site.dest
+    └── site.dest - *Your generated site, **PUBLISH-IT***
         ├ index.html
     	├ contact.html
     	├ style.css
@@ -96,8 +100,8 @@ it, and send the changes back if you wanna contribute*
 ### TODO
 [ ] Improve style.css and general style
 [ ] Full navigation bar links on blog files
+[ ] Make it works with distant folders
 
 ### Contact
-
 Please send me patches, suggestions and any other things to:
 <henriqueleng@openmailbox.org>
