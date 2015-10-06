@@ -5,7 +5,6 @@ CSSFILE='style.css'
 BLOGDIR='blog'
 
 MARKDOWN=smu
-EDITOR=vim
 
 #### SITE INFO ####
 TITLE='Sample Title'
@@ -62,6 +61,14 @@ then
 
 elif [ "$1" == "post" ]
 then
+EDITOR=$(printenv EDITOR)
+
+if [ "$EDITOR" == "" ]
+then
+echo 'No $EDITOR, set it to use this function'
+exit
+fi
+
 number=$(ls -1 $SRCDIR/$BLOGDIR | wc -l )
 
 echo 'Name of the post:'
