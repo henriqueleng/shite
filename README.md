@@ -2,7 +2,7 @@
 *looking for a better name*
 
 This is a simple static-site generator made to build my personal site:
-(henriquelengler.com)
+(http://www.henriquelengler.com)
 
 It is made entirely posix shell + posix tools (sed, ls, wc, echo, cat
 ...), *if something fail in your system, please tell me*.
