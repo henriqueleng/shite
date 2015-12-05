@@ -1,6 +1,6 @@
 #!/bin/sh
 DESTDIR='site.dest'
-SRCDIR='site.source'
+SRCDIR='examples/site.source'
 CSSFILE='style.css'
 BLOGDIR='blog'
 
