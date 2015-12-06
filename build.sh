@@ -94,14 +94,12 @@ cp $SRCDIR/favicon.ico $DESTDIR
 ls -1 $SRCDIR | while read file; do
 	if [ "$file" == "$BLOGDIR" ]; then
 		blog=1
-		level=2
 		mkdir $DESTDIR/$BLOGDIR
 		header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/index.html
 		echo "<li id="'"navbar"'"><a href="index.html">$BLOGDIR</a></li>" >> $DESTDIR/$BLOGDIR/index.html
 	fi
 
 	case $file in *.md)
-		level=1
 		filename=$(echo $file | sed s/.md//)
 		header style.css index.html >> $DESTDIR/$filename.html
 		ls -1 $SRCDIR | grep md | sed s/.md// | while read file2; do
