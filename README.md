@@ -19,6 +19,8 @@ on examples/site.source to site.dest folder.
 Change the paths of DESTDIR, SRCDIR, and the mardown processor you wanna
 use on MARKDOWN.
 
+An example SRCDIR, that I use is SRCDIR=/home/henri/Source/site.source
+
 BLOGDIR already includes SRCDIR.
 
 ### The blog
