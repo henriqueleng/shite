@@ -1,5 +1,4 @@
 # shite - posix shell, static site generator.
-*looking for a better name*
 
 This is a simple static-site generator made to build my personal site:
 (http://www.henriquelengler.com)
