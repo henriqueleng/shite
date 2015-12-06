@@ -41,6 +41,12 @@ cat <<!__EOF__
 !__EOF__
 }
 
+barentry() { # $1 = file, $2 = name
+cat <<!__EOF__
+<li id="navbar"><a href="$1">$2</a></li>
+!__EOF__
+}
+
 clean() {
 	rm -rf $DESTDIR
 }
@@ -96,22 +102,42 @@ ls -1 $SRCDIR | while read file; do
 		blog=1
 		mkdir $DESTDIR/$BLOGDIR
 		header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/index.html
-		echo "<li id="'"navbar"'"><a href="index.html">$BLOGDIR</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+		barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/index.html
+
+		if [ "$(ls -1 $SRCDIR/$BLOGDIR)" ]; then
+		    :
+		else
+			echo "<p id="'"warn"'">No posts yet</p>" >> $DESTDIR/$BLOGDIR/index.html
 	fi
+
+	ls -1 $SRCDIR/$BLOGDIR | while read file; do
+	    case $file in *.md)
+    	    file=$(echo $file | sed s/.md//)
+	        header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/$file.html
+			barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/$file.html
+	        title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
+	        date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
+	        echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+	        $MARKDOWN < $SRCDIR/$BLOGDIR/$file.md >> $DESTDIR/$BLOGDIR/$file.html
+	        footer >> $DESTDIR/$BLOGDIR/$file.html
+	    esac
+    done
+    footer >> $DESTDIR/$BLOGDIR/index.html
+	fi #END BLOG POPULATE
 
 	case $file in *.md)
 		filename=$(echo $file | sed s/.md//)
 		header style.css index.html >> $DESTDIR/$filename.html
 		ls -1 $SRCDIR | grep md | sed s/.md// | while read file2; do
 		if [ $file2 != "index" ]; then
-			echo "<li id="'"navbar"'"><a href="$file2.html">$file2</a></li>" >> $DESTDIR/$filename.html
+			barentry $file2.html $file2 >> $DESTDIR/$filename.html
 		fi
 		done
 		if [ $blog == 1 ]; then
-			echo "<li id="'"navbar"'"><a href="$BLOGDIR/index.html">$BLOGDIR</a></li>" >> $DESTDIR/$filename.html
+			barentry $BLOGDIR/index.html $BLOGDIR >> $DESTDIR/$filename.html
 			if [ $filename != "index" ]; then
 				if [ $blog == 1 ]; then
-					echo "<li id="'"navbar"'"><a href="../$filename.html">$filename</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+					barentry ../$filename.html $filename >> $DESTDIR/$BLOGDIR/index.html
 				fi
 			fi
 		fi
@@ -119,28 +145,3 @@ ls -1 $SRCDIR | while read file; do
 		footer >> $DESTDIR/$filename.html
 	esac
 done
-
-# populate blog, XXX - find a workaround to use the $blog variable with
-# no need to check again
-if [ -d $SRCDIR/$BLOGDIR ]; then
-
-if [ "$(ls -1 $SRCDIR/$BLOGDIR)" ]; then
-	:
-else
-   echo "<p id="'"warn"'">No posts yet</p>" >> $DESTDIR/$BLOGDIR/index.html 
-fi
-
-ls -1 $SRCDIR/$BLOGDIR | while read file; do
-	case $file in *.md)
-		file=$(echo $file | sed s/.md//)
-		header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/$file.html
-		echo "<li id="'"navbar"'"><a href="index.html">$BLOGDIR</a></li>" >> $DESTDIR/$BLOGDIR/$file.html
-		title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
-		date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
-		echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
-		$MARKDOWN < $SRCDIR/$BLOGDIR/$file.md >> $DESTDIR/$BLOGDIR/$file.html
-		footer >> $DESTDIR/$BLOGDIR/$file.html
-	esac	
-	done
-	footer >> $DESTDIR/$BLOGDIR/index.html
-fi
