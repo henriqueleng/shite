@@ -18,6 +18,7 @@ Edit the variables in build.sh, by default it will compile a sample site
 on examples/site.source to site.dest folder.
 Change the paths of DESTDIR, SRCDIR, and the mardown processor you wanna
 use on MARKDOWN.
+
 BLOGDIR already includes SRCDIR.
 
 ### The blog
