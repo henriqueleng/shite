@@ -98,6 +98,7 @@ cp $SRCDIR/$CSSFILE $DESTDIR
 cp $SRCDIR/favicon.ico $DESTDIR
 
 ls -1 $SRCDIR | while read file; do
+
 	if [ "$file" == "$BLOGDIR" ]; then
 		blog=1
 		mkdir $DESTDIR/$BLOGDIR
@@ -105,34 +106,35 @@ ls -1 $SRCDIR | while read file; do
 		barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/index.html
 
 		if [ "$(ls -1 $SRCDIR/$BLOGDIR)" ]; then
-		    :
+			ls -1 $SRCDIR/$BLOGDIR | while read file; do
+				case $file in *.md)
+					file=$(echo $file | sed s/.md//)
+					header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/$file.html
+					barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/$file.html
+					title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
+					date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
+					echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+					$MARKDOWN < $SRCDIR/$BLOGDIR/$file.md >> $DESTDIR/$BLOGDIR/$file.html
+					footer >> $DESTDIR/$BLOGDIR/$file.html
+				esac
+			done
 		else
 			echo "<p id="'"warn"'">No posts yet</p>" >> $DESTDIR/$BLOGDIR/index.html
-	fi
+		fi
 
-	ls -1 $SRCDIR/$BLOGDIR | while read file; do
-	    case $file in *.md)
-    	    file=$(echo $file | sed s/.md//)
-	        header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/$file.html
-			barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/$file.html
-	        title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
-	        date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
-	        echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
-	        $MARKDOWN < $SRCDIR/$BLOGDIR/$file.md >> $DESTDIR/$BLOGDIR/$file.html
-	        footer >> $DESTDIR/$BLOGDIR/$file.html
-	    esac
-    done
-    footer >> $DESTDIR/$BLOGDIR/index.html
-	fi #END BLOG POPULATE
+		footer >> $DESTDIR/$BLOGDIR/index.html
+	fi # END BLOG
 
 	case $file in *.md)
 		filename=$(echo $file | sed s/.md//)
 		header style.css index.html >> $DESTDIR/$filename.html
+
 		ls -1 $SRCDIR | grep md | sed s/.md// | while read file2; do
-		if [ $file2 != "index" ]; then
-			barentry $file2.html $file2 >> $DESTDIR/$filename.html
-		fi
+			if [ $file2 != "index" ]; then
+				barentry $file2.html $file2 >> $DESTDIR/$filename.html
+			fi
 		done
+
 		if [ $blog == 1 ]; then
 			barentry $BLOGDIR/index.html $BLOGDIR >> $DESTDIR/$filename.html
 			if [ $filename != "index" ]; then
@@ -141,6 +143,7 @@ ls -1 $SRCDIR | while read file; do
 				fi
 			fi
 		fi
+
 		$MARKDOWN < $SRCDIR/$file >> $DESTDIR/$filename.html
 		footer >> $DESTDIR/$filename.html
 	esac
