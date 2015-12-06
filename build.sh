@@ -11,14 +11,14 @@ TITLE='Sample Title'
 SUBTITLE='Personal page'
 ###################
 
-header() { #$1 = css location, $2 index location
+header() { #$1 = css location, $2 favicon location, $3 index location
 cat <<!__EOF__
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="$1">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
+	<link rel="icon" href="$2" type="image/x-icon">
   </head>
   <body>
   <div id="wrapper">
@@ -26,7 +26,7 @@ cat <<!__EOF__
     <h1><a href=$3>$TITLE</a></h1>
 	<h2>&mdash; $SUBTITLE</h2>
   </header>
-<li id="navbar"><a href=$2>home</a></li>
+<li id="navbar"><a href=$3>home</a></li>
 !__EOF__
 }
 
@@ -97,54 +97,74 @@ touch $DESTDIR/index.html
 cp $SRCDIR/$CSSFILE $DESTDIR
 cp $SRCDIR/favicon.ico $DESTDIR
 
+# check for blog
+if [ -d "$SRCDIR/$BLOGDIR" ]; then
+	blog=1
+	blogentries=0
+else
+	echo "there is no blog, not building it"
+fi
+
 ls -1 $SRCDIR | while read file; do
-
-	if [ "$file" == "$BLOGDIR" ]; then
-		blog=1
-		mkdir $DESTDIR/$BLOGDIR
-		header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/index.html
-		barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/index.html
-
-		if [ "$(ls -1 $SRCDIR/$BLOGDIR)" ]; then
-			ls -1 $SRCDIR/$BLOGDIR | while read file; do
-				case $file in *.md)
-					file=$(echo $file | sed s/.md//)
-					header ../style.css ../index.html >> $DESTDIR/$BLOGDIR/$file.html
-					barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/$file.html
-					title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
-					date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
-					echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
-					$MARKDOWN < $SRCDIR/$BLOGDIR/$file.md >> $DESTDIR/$BLOGDIR/$file.html
-					footer >> $DESTDIR/$BLOGDIR/$file.html
-				esac
-			done
-		else
-			echo "<p id="'"warn"'">No posts yet</p>" >> $DESTDIR/$BLOGDIR/index.html
+	if [ $blog == 1 ]; then
+		if [ "$file" == "$BLOGDIR" ]; then
+			echo blog detected, building it!
 		fi
-
-		footer >> $DESTDIR/$BLOGDIR/index.html
-	fi # END BLOG
+	fi
 
 	case $file in *.md)
 		filename=$(echo $file | sed s/.md//)
-		header style.css index.html >> $DESTDIR/$filename.html
-
-		ls -1 $SRCDIR | grep md | sed s/.md// | while read file2; do
-			if [ $file2 != "index" ]; then
-				barentry $file2.html $file2 >> $DESTDIR/$filename.html
-			fi
-		done
-
-		if [ $blog == 1 ]; then
-			barentry $BLOGDIR/index.html $BLOGDIR >> $DESTDIR/$filename.html
-			if [ $filename != "index" ]; then
-				if [ $blog == 1 ]; then
-					barentry ../$filename.html $filename >> $DESTDIR/$BLOGDIR/index.html
-				fi
+		header style.css favicon.ico index.html >> $DESTDIR/$filename.html
+		if [ $filename != "index" ]; then
+			barentry $filename.html $filename >> $DESTDIR/header.html
+			if [ $blog == 1 ]; then
+				barentry ../$filename.html $filename >> $DESTDIR/$BLOGDIR/header.html
 			fi
 		fi
-
-		$MARKDOWN < $SRCDIR/$file >> $DESTDIR/$filename.html
-		footer >> $DESTDIR/$filename.html
 	esac
+
+	if [ $blogentries == 0 ]; then
+		echo addind blog to headers
+		mkdir $DESTDIR/$BLOGDIR
+		header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/index.html
+		barentry $BLOGDIR/index.html $BLOGDIR >> $DESTDIR/header.html #blog entry on pages
+		barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/header.html #blog entry on blog pages
+		blogentries=1
+	fi
+done 
+
+ls -1 $SRCDIR | grep md | sed s/.md// | while read file; do
+	cat $DESTDIR/header.html >> $DESTDIR/$file.html
+	$MARKDOWN < $SRCDIR/$file.md >> $DESTDIR/$file.html
+	footer >> $DESTDIR/$file.html
 done
+
+if [ $blog = 1 ]; then
+	echo adding header to blog 
+	cat $DESTDIR/$BLOGDIR/header.html >> $DESTDIR/$BLOGDIR/index.html
+
+	if [ "$(ls -A $SRCDIR/$BLOGDIR)" ]; then
+		echo "blog not empty, building posts"
+
+		echo "posts detected:"
+		ls -1 $SRCDIR/$BLOGDIR | grep .md | sed s/.md// | while read file; do
+			echo $file
+			header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/$file.html
+			cat $DESTDIR/$BLOGDIR/header.html >> $DESTDIR/$BLOGDIR/$file.html
+			title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
+			date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
+			echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+			$MARKDOWN < $SRCDIR/$BLOGDIR/$file.md >> $DESTDIR/$BLOGDIR/$file.html
+			footer >> $DESTDIR/$BLOGDIR/$file.html
+		done
+	else
+	   echo "<p id="'"warn"'">No posts yet</p>" >> $DESTDIR/$BLOGDIR/index.html
+	fi
+	footer >> $DESTDIR/$BLOGDIR/index.html
+
+	echo cleaning tmp files
+	rm $DESTDIR/$BLOGDIR/header.html
+	rm $DESTDIR/header.html
+
+	echo "site builded, copy it to the server"
+fi

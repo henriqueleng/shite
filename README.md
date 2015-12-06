@@ -68,11 +68,11 @@ it. I am working to make a good default style.css.
 it, and send the changes back if you wanna contribute*
 
 ### TODO
-[ ] Improve style.css and general style
+- [ ] Improve style.css and general style
 
-[ ] Full navigation bar links on blog files
+- [x] Full navigation bar links on blog files
 
-[ ] Make it works with distant folders
+- [ ] Make it works with distant folders
 
 ### Contact
 Please send me patches, suggestions and any other things to:
