@@ -14,18 +14,12 @@ I decided to make it because I thought it was simple to create one and even
 that there is a lot "site-builders" in the internet, no one make a site
 with the style I want. Which is infinite simple pages + a blog.
 
-## How it works
-Right know It is working in a very static way, you get the source, and
-start to write your site on the $SRCDIR (by default site.source)
-directory, then build.sh will build your site to $DESTDIR (by default
-site.dest). *Obs.: change this variables on build.sh*
-You only need to care that $SRCDIR and $DESTDIR are in the same folder of the 
-build.sh script -- *TODO, make it work with folders in any location*.
-
-Edit the functions header() and footer() to change the defaults, they
-will be in every page.
-
-Each file in the main dir will be linked in the navigation bar.
+## Starting
+Edit the variables in build.sh, by default it will compile a sample site
+on examples/site.source to site.dest folder.
+Change the paths of DESTDIR, SRCDIR, and the mardown processor you wanna
+use on MARKDOWN.
+BLOGDIR already includes SRCDIR.
 
 ### The blog
 Each file in the $BLOGDIR will be listed in the $BLOGDIR/index.html that
@@ -38,8 +32,9 @@ To create a new post just run:
 It will ask by a title, create the file, put the actual date on it and
 open your editor (set by the $EDITOR enviroment variable).
 
-You should use this command to blogpost, because it will generate the 
-correct format and put all the infos shite needs.
+PLEASE. You should use this command at least to create the files. because 
+it will generate the header that shite understand. 
+After you ran it once, you can open it normally with your editor.
 
 Then build it, it will create a index in the $BLOGDIR with a list
 of all your posts.
@@ -63,31 +58,6 @@ To only clean and exit do:
 
     ./build.sh clean
 
-### So, it will be something like this:
-
-    sitebuild/
-    ├── build.sh
-    ├── README
-    ├── site.source
-    │   ├── index.md
-    │   ├── contact.md
-    │   ├── style.css
-    │   ├── ...
-    │   └ blog/
-    │     ├ 1-example-post.md
-    │     ├ 2-bla.md
-    │     └ ...
-    │
-    └── site.dest - *Your generated site, **PUBLISH-IT***
-        ├ index.html
-    	├ contact.html
-    	├ style.css
-    	└ blog/
-          ├ index.html (NEW, WITH A LIST OF POSTS)
-          ├ 1-example-post.md
-          ├ 2-bla.md
-          └ ...
-
 ### Site style:
 
 If your generated website is ugly, don't worry, editing the CSS file can solve all 
@@ -99,7 +69,9 @@ it, and send the changes back if you wanna contribute*
 
 ### TODO
 [ ] Improve style.css and general style
+
 [ ] Full navigation bar links on blog files
+
 [ ] Make it works with distant folders
 
 ### Contact
