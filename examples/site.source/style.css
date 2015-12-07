@@ -29,3 +29,16 @@ footer {
 	margin: auto;
 	padding: 90px;
 }
+
+#title, #subtitle {
+	display: inline-block;
+	margin-bottom: 10%;
+}
+
+#subtitle {
+	font-size: 100%;
+}
+
+li {
+	margin-top: 6%
+}

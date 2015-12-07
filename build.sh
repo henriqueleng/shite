@@ -23,8 +23,8 @@ cat <<!__EOF__
   <body>
   <div id="wrapper">
   <header>
-    <h1><a href=$3>$TITLE</a></h1>
-	<h2>&mdash; $SUBTITLE</h2>
+    <h1 id="title"><a href=$3>$TITLE</a></h1>
+	<h2 id="subtitle>&mdash; $SUBTITLE</h2>
   </header>
 <li id="navbar"><a href=$3>home</a></li>
 !__EOF__
