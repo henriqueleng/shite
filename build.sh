@@ -112,15 +112,28 @@ ls -1 $SRCDIR | while read file; do
 		fi
 	fi
 
-	case $file in *.md)
-		filename=$(echo $file | sed s/.md//)
-		header style.css favicon.ico index.html >> $DESTDIR/$filename.html
-		if [ $filename != "index" ]; then
-			barentry $filename.html $filename >> $DESTDIR/header.html
-			if [ $blog == 1 ]; then
-				barentry ../$filename.html $filename >> $DESTDIR/$BLOGDIR/header.html
+	case $file in
+		*.md)
+			filename=$(echo $file | sed s/.md//)
+			header style.css favicon.ico index.html >> $DESTDIR/$filename.html
+			if [ $filename != "index" ]; then
+				barentry $filename.html $filename >> $DESTDIR/header.html
+				if [ $blog == 1 ]; then
+					barentry ../$filename.html $filename >> $DESTDIR/$BLOGDIR/header.html
+				fi
 			fi
-		fi
+			;;
+
+		*.link)
+			echo "link files found:"
+			echo "$file"
+			filename=$(echo $file | sed s/.link//)
+			url=$(head -n 1 $SRCDIR/$file)
+			barentry $url $filename >> $DESTDIR/header.html
+			if [ $blog == 1 ]; then
+				barentry $url $filename >> $DESTDIR/$BLOGDIR/header.html
+			fi
+			;;
 	esac
 
 	if [ $blogentries == 0 ]; then
@@ -166,5 +179,6 @@ if [ $blog = 1 ]; then
 	rm $DESTDIR/$BLOGDIR/header.html
 	rm $DESTDIR/header.html
 
+	printf '\n\n'
 	echo "site builded, copy it to the server"
 fi
