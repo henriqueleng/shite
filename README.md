@@ -24,14 +24,14 @@ BLOGDIR already includes SRCDIR.
 
 ## Files:
 
-	foo.md - each .md file in the main directory will be a a page linked
+**foo.md** - each .md file in the main directory will be a a page linked
 into the navigation bar. Write it in markdown.
 
-	foo.link - each .link file will end as a link in the navigation bar
+**foo.link** - each .link file will end as a link in the navigation bar
 to the url you put in the file. You should put thu url in the first
 line. See the example.
 
-	blog/ - this is your blog directory. it is where you write all 
+**blog/** - this is your blog directory. it is where you write all 
 your posts. This blog will be linked in the navigation bar of each page, 
 and shite will generate a list in the first page iof the blog with all 
 your posts and date.
@@ -40,7 +40,7 @@ To post, run the script
 
     ./build.sh post
 
-_PLEASE. You should use this command at least to create the files._
+**PLEASE. You should use this command at least to create the files.**
 
 this script will create a .md file in this directory with propper header and
 title.
