@@ -86,6 +86,9 @@ it, and send the changes back if you wanna contribute*
 
 - [x] Full navigation bar links on blog files
 
+- [ ] Remove some variables from the script, making it universal and
+  installable
+
 - [ ] Link on navigation bar
 
 - [ ] Make it works with distant folders
