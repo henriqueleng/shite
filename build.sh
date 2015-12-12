@@ -100,10 +100,13 @@ cp $SRCDIR/favicon.ico $DESTDIR
 # check for blog
 if [ -d "$SRCDIR/$BLOGDIR" ]; then
 	blog=1
+	BLOGHEADER=$(mktemp -t shite-blogheader.XXX)
 	blogentries=0
 else
 	echo "there is no blog, not building it"
 fi
+
+HEADER=$(mktemp shite-header.XXX)
 
 ls -1 $SRCDIR | while read file; do
 	if [ $blog == 1 ]; then
@@ -117,9 +120,9 @@ ls -1 $SRCDIR | while read file; do
 			filename=$(echo $file | sed s/.md//)
 			header style.css favicon.ico index.html >> $DESTDIR/$filename.html
 			if [ $filename != "index" ]; then
-				barentry $filename.html $filename >> $DESTDIR/header.html
+				barentry $filename.html $filename >> $HEADER
 				if [ $blog == 1 ]; then
-					barentry ../$filename.html $filename >> $DESTDIR/$BLOGDIR/header.html
+					barentry ../$filename.html $filename >> $BLOGHEADER
 				fi
 			fi
 			;;
@@ -129,9 +132,9 @@ ls -1 $SRCDIR | while read file; do
 			echo "$file"
 			filename=$(echo $file | sed s/.link//)
 			url=$(head -n 1 $SRCDIR/$file)
-			barentry $url $filename >> $DESTDIR/header.html
+			barentry $url $filename >> $HEADER
 			if [ $blog == 1 ]; then
-				barentry $url $filename >> $DESTDIR/$BLOGDIR/header.html
+				barentry $url $filename >> $BLOGHEADER
 			fi
 			;;
 	esac
@@ -140,21 +143,21 @@ ls -1 $SRCDIR | while read file; do
 		echo addind blog to headers
 		mkdir $DESTDIR/$BLOGDIR
 		header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/index.html
-		barentry $BLOGDIR/index.html $BLOGDIR >> $DESTDIR/header.html #blog entry on pages
-		barentry index.html $BLOGDIR >> $DESTDIR/$BLOGDIR/header.html #blog entry on blog pages
+		barentry $BLOGDIR/index.html $BLOGDIR >> $HEADER #blog entry on pages
+		barentry index.html $BLOGDIR >> $BLOGHEADER #blog entry on blog pages
 		blogentries=1
 	fi
 done 
 
 ls -1 $SRCDIR | grep md | sed s/.md// | while read file; do
-	cat $DESTDIR/header.html >> $DESTDIR/$file.html
+	cat $HEADER >> $DESTDIR/$file.html
 	$MARKDOWN < $SRCDIR/$file.md >> $DESTDIR/$file.html
 	footer >> $DESTDIR/$file.html
 done
 
 if [ $blog = 1 ]; then
 	echo adding header to blog 
-	cat $DESTDIR/$BLOGDIR/header.html >> $DESTDIR/$BLOGDIR/index.html
+	cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/index.html
 
 	if [ "$(ls -A $SRCDIR/$BLOGDIR)" ]; then
 		echo "blog not empty, building posts"
@@ -163,7 +166,7 @@ if [ $blog = 1 ]; then
 		ls -1 $SRCDIR/$BLOGDIR | grep .md | sed s/.md// | while read file; do
 			echo $file
 			header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/$file.html
-			cat $DESTDIR/$BLOGDIR/header.html >> $DESTDIR/$BLOGDIR/$file.html
+			cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/$file.html
 			title=$(head -n1 $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
 			date=$(sed -n '2p' $SRCDIR/$BLOGDIR/$file.md | sed "s/..*; //")
 			echo "<li>$date - <a href="$file.html">$title</a></li>" >> $DESTDIR/$BLOGDIR/index.html
@@ -176,8 +179,8 @@ if [ $blog = 1 ]; then
 	footer >> $DESTDIR/$BLOGDIR/index.html
 
 	echo cleaning tmp files
-	rm $DESTDIR/$BLOGDIR/header.html
-	rm $DESTDIR/header.html
+	rm $BLOGHEADER
+	rm $HEADER
 
 	printf '\n\n'
 	echo "site builded, copy it to the server"
