@@ -67,12 +67,12 @@ then
 
 elif [ "$1" == "post" ]
 then
-EDITOR=$(printenv EDITOR)
+	EDITOR=$(printenv EDITOR)
 
-if [ "$EDITOR" == "" ]
-then
-echo 'No $EDITOR, set it to use this function'
-exit
+	if [ "$EDITOR" == "" ]
+	then
+		echo 'No $EDITOR, set it to use this function'
+	exit
 fi
 
 number=$(ls -1 $SRCDIR/$BLOGDIR | wc -l )
@@ -100,13 +100,13 @@ cp $SRCDIR/favicon.ico $DESTDIR
 # check for blog
 if [ -d "$SRCDIR/$BLOGDIR" ]; then
 	blog=1
-	BLOGHEADER=$(mktemp -t shite-blogheader.XXX)
+	BLOGHEADER=$(mktemp -t shite-blogheader.XXXXXX)
 	blogentries=0
 else
 	echo "there is no blog, not building it"
 fi
 
-HEADER=$(mktemp shite-header.XXX)
+HEADER=$(mktemp shite-header.XXXXXX)
 
 ls -1 $SRCDIR | while read file; do
 	if [ $blog == 1 ]; then
