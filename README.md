@@ -93,6 +93,7 @@ it, and send the changes back if you wanna contribute*
 
 - [ ] Make it works with distant folders
 
+- [ ] Manpage
 ### Contact
 Please send me patches, suggestions and any other things to:
 <henriqueleng@openmailbox.org>
