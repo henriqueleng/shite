@@ -15,7 +15,7 @@ with the style I want. Which is infinite simple pages + a blog.
 
 ## Starting
 Start by just running ./build.sh, it will build an example site, so you
-can see how it works. Use the example site as an skeleton to start.
+can see how it works. Use the example site as an skeleton fil, to start.
 
 Edit the variables in build.sh, to match the folder of your source.
 An example SRCDIR, that I use is SRCDIR=/home/henri/Source/site.source
@@ -33,7 +33,7 @@ line. See the example.
 
 **blog/** - this is your blog directory. it is where you write all 
 your posts. This blog will be linked in the navigation bar of each page, 
-and shite will generate a list in the first page of the blog with all 
+and shite will generate a list in the first page iof the blog with all 
 your posts and date.
 
 To post, run the script 
