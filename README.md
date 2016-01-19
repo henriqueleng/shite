@@ -10,15 +10,13 @@ The only extra tools you will need is a markdown processor, that by
 default is smu (https://github.com/Gottox/smu), and a text editor.
 
 I decided to make it because I thought it was simple to create one and even
-that there is a lot "site-builders" in the internet, no one make a site
-with the style I want. Which is infinite simple pages + a blog.
+that there is a lot "site-builders" in the internet, no one make a site the way
+I want. Which is infinite simple pages + a blog.
 
 ## Starting
+
 Start by just running ./build.sh, it will build an example site, so you
 can see how it works. Use the example site as an skeleton to start.
-
-Edit the variables in build.sh, to match the folder of your source.
-An example SRCDIR, that I use is SRCDIR=/home/henri/Source/site.source
 
 BLOGDIR already includes SRCDIR.
 
@@ -35,6 +33,9 @@ line. See the example.
 your posts. This blog will be linked in the navigation bar of each page, 
 and shite will generate a list in the first page of the blog with all 
 your posts and date.
+
+**shiterc** - where is set the name of the site, subtitle and footer text, 
+write these things in markdown, as done in the example.
 
 To post, run the script 
 
@@ -87,13 +88,16 @@ it, and send the changes back if you wanna contribute*
 - [x] Full navigation bar links on blog files
 
 - [ ] Remove some variables from the script, making it universal and
-  installable
+  installable (almost done, there still DESTDIR, MARKDOWN, SRCDIR ...)
 
 - [ ] Link on navigation bar
 
 - [ ] Make it works with distant folders
 
 - [ ] Manpage
+
+- [ ] Indent code
+
 ### Contact
 Please send me patches, suggestions and any other things to:
 <henriqueleng@openmailbox.org>
