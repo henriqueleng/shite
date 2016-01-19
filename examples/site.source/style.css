@@ -7,38 +7,66 @@ url(http://fonts.gstatic.com/s/inconsolata/v11/BjAYBlHtW3CJxDcjzrnZCJ0EAVxt0G0bi
 format('truetype');
 }
 
-body{
+body {
 	text-align:center;
 	font-family: 'Inconsolata', sans-serif;
+	width:90%;
+	max-width:650px;
+	margin:40px auto;
+	text-align:left;
+	color: #444;
+	background-color: #EEEEEE;
+	padding: 10px;
 }
 
-#wrapper{
-    width:90%;
-    max-width:720px;
-    margin:auto;
-    text-align:left;
+#nav {
+	list-style-type: none;
+	margin: 0;
+	margin-bottom: 5%;
+	padding: 0;
+	overflow: hidden;
+	font-size: 120%;
+	background-color: #CCCCCC;
 }
 
-#navbar {
-	display: inline;
+#nav li a {
+	float: left;
+	display: inline-block;
 	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+h1 {
+	margin-bottom: 5%;
+}
+
+#title, #subtitle {
+        display: inline-block;
+        margin-bottom: 5%;
+        font-size: 170%;
+}
+
+#subtitle {
+        font-size: 100%;
+}
+
+#blogpost li {
+	margin-bottom: 1%;
+}
+
+#posttitle, #postdate {
+	display: inline-block;
+}
+
+#postdate {
+	font-size: 100%;
+    	float: right;
+	padding: 2%;
 }
 
 footer {
 	text-align: right;
 	margin: auto;
 	padding: 90px;
-}
-
-#title, #subtitle {
-	display: inline-block;
-	margin-bottom: 10%;
-}
-
-#subtitle {
-	font-size: 100%;
-}
-
-li {
-	margin-top: 6%
 }
