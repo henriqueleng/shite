@@ -1,0 +1,202 @@
+#!/bin/sh
+DESTDIR='site.dest'
+SRCDIR='examples/site.source'
+CSSFILE='style.css'
+BLOGDIR='blog'
+
+MARKDOWN=smu
+
+header() { #$1 = css location, $2 favicon location, $3 index location
+cat <<!__EOF__
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="$1">
+    <link rel="icon" href="$2" type="image/x-icon">
+  </head>
+  <body>
+    <header>
+      <h1 id="title"><a href=$3>$TITLE</a></h1>
+      <h2 id="subtitle">&mdash; $SUBTITLE</h2>
+    </header>
+    <ul id="nav">
+      <li><a href=$3>home</a></li>
+!__EOF__
+}
+
+footer() {
+cat <<!__EOF__
+    <footer>
+      <p> $FOOTER
+    </footer>
+  </body>
+</html>
+!__EOF__
+}
+
+barentry() { # $1 = file, $2 = name
+cat <<!__EOF__
+      <li><a href="$1">$2</a></li>
+!__EOF__
+}
+
+clean() {
+	rm -rf $DESTDIR
+}
+
+# START #
+if [ "$1" == "clean" ]
+then
+	clean
+	exit
+
+elif [ "$1" == "install" ]
+then
+	cp -R $DESTDIR/* $2
+	exit
+
+elif [ "$1" == "-h" ]
+then
+	echo "usage: $0 [clean/post] [install <PATH>]"
+	exit
+
+elif [ "$1" == "post" ]
+then
+	EDITOR=$(printenv EDITOR)
+
+	if [ "$EDITOR" == "" ]
+	then
+		echo 'No $EDITOR, set it to use this function'
+	exit
+fi
+
+number=$(ls -1 $SRCDIR/$BLOGDIR | wc -l )
+
+echo 'Name of the post:'
+read TITLE
+date=$(date "+%Y/%m/%d")
+
+filename="$(($number + 1))-$(echo $TITLE | sed s/' '/'-'/g)"
+
+cat <<!__EOF__ >> $SRCDIR/$BLOGDIR/$filename.md
+# $TITLE
+$date
+!__EOF__
+$EDITOR $SRCDIR/$BLOGDIR/$filename.md
+fi
+
+## BEGIN ##
+clean
+mkdir $DESTDIR
+touch $DESTDIR/index.html
+cp $SRCDIR/$CSSFILE $DESTDIR
+cp $SRCDIR/favicon.ico $DESTDIR
+
+# parse site configs:
+. $SRCDIR/shiterc
+echo "parsed from $SRCDIR/shiterc"
+echo "title: $TITLE"
+echo "subtitle: $SUBTITLE"
+echo "footer: $FOOTER"
+echo
+
+TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
+
+# check for blog
+if [ -d "$SRCDIR/$BLOGDIR" ]; then
+	blog=1
+	BLOGHEADER=$(mktemp -t shite-blogheader.XXXXXX)
+	blogentries=0
+else
+	echo "there is no blog, not building it"
+fi
+
+HEADER=$(mktemp shite-header.XXXXXX)
+
+ls -1 $SRCDIR | while read file; do
+	if [ $blog == 1 ]; then
+		if [ "$file" == "$BLOGDIR" ]; then
+			echo blog detected, building it!
+		fi
+	fi
+
+	case $file in
+		*.md)
+			filename=$(echo $file | sed s/.md//)
+			header style.css favicon.ico index.html >> $DESTDIR/$filename.html
+			if [ $filename != "index" ]; then
+				barentry $filename.html $filename >> $HEADER
+				if [ $blog == 1 ]; then
+					barentry ../$filename.html $filename >> $BLOGHEADER
+				fi
+			fi
+			;;
+
+		*.link)
+			echo "link files found:"
+			echo "$file"
+			filename=$(echo $file | sed s/.link//)
+			url=$(sed 1q $SRCDIR/$file)
+			barentry $url $filename >> $HEADER
+			if [ $blog == 1 ]; then
+				barentry $url $filename >> $BLOGHEADER
+			fi
+			;;
+	esac
+
+	if [ $blogentries == 0 ]; then
+		echo addind blog to headers
+		mkdir $DESTDIR/$BLOGDIR
+		header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/index.html
+		barentry $BLOGDIR/index.html $BLOGDIR >> $HEADER #blog entry on pages
+		barentry index.html $BLOGDIR >> $BLOGHEADER #blog entry on blog pages
+		blogentries=1
+	fi
+done 
+
+ls -1 $SRCDIR | grep md | sed s/.md// | while read file; do
+	cat $HEADER >> $DESTDIR/$file.html
+        echo '     </ul>' >> $DESTDIR/$file.html
+	$MARKDOWN < $SRCDIR/$file.md >> $DESTDIR/$file.html
+	footer >> $DESTDIR/$file.html
+done
+
+if [ $blog = 1 ]; then
+	echo adding header to blog 
+	cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/index.html
+	echo '     </ul>' >> $DESTDIR/$BLOGDIR/index.html
+
+	if [ "$(ls -A $SRCDIR/$BLOGDIR)" ]; then
+		echo "blog not empty, building posts"
+
+		echo "posts detected:"
+		echo '     <ul id="blogpost">' >> $DESTDIR/$BLOGDIR/index.html
+		ls -1 $SRCDIR/$BLOGDIR | grep .md | sed s/.md// | while read file; do
+			echo $file
+			header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/$file.html
+			cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/$file.html
+			posttitle=$(sed 1q $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
+			postdate=$(sed -n 2p $SRCDIR/$BLOGDIR/$file.md)
+			echo "       <li>$postdate - <a href="$file.html">$posttitle</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+			echo '     </ul>' >> $DESTDIR/$BLOGDIR/$file.html
+			echo "<h1 id="'"posttitle"'">$posttitle</h1>" >> $DESTDIR/$BLOGDIR/$file.html
+			echo "<h2 id="'"postdate"'">Written in: $postdate</h2>" >> $DESTDIR/$BLOGDIR/$file.html
+			sed 1,2d $SRCDIR/$BLOGDIR/$file.md | $MARKDOWN >> $DESTDIR/$BLOGDIR/$file.html
+			footer >> $DESTDIR/$BLOGDIR/$file.html
+		done
+		echo '     </ul>' >> $DESTDIR/$BLOGDIR/index.html
+	else
+	   echo '<p id="warn">No posts yet</p>' >> $DESTDIR/$BLOGDIR/index.html
+	fi
+	footer >> $DESTDIR/$BLOGDIR/index.html
+
+	echo cleaning tmp files
+	rm $BLOGHEADER
+	rm $HEADER
+
+	printf '\n\n'
+	echo "site builded, copy it to the server"
+fi
