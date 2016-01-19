@@ -1,5 +1,5 @@
 # My Second Post
-## &mdash; 2015/07/22
+2015/07/22
 
 ## This is another post example
 

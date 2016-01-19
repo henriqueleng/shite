@@ -1,5 +1,5 @@
 # Hello World
-## &mdash; 2015/07/22
+2015/07/22
 
 ## Some subtitle
 
