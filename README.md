@@ -13,65 +13,15 @@ I decided to make it because I thought it was simple to create one and even
 that there is a lot "site-builders" in the internet, no one make a site the way
 I want. Which is infinite simple pages + a blog.
 
-## Starting
+## Installing
+Just edit the variables on the Makefile and run 
 
-Start by just running ./build.sh, it will build an example site, so you
-can see how it works. Use the example site as an skeleton to start.
+    # make install
 
-BLOGDIR already includes SRCDIR.
+## Usage
 
-## Files:
-
-**foo.md** - each .md file in the main directory will be a a page linked
-into the navigation bar. Write it in markdown.
-
-**foo.link** - each .link file will end as a link in the navigation bar
-to the url you put in the file. You should put thu url in the first
-line. See the example.
-
-**blog/** - this is your blog directory. it is where you write all 
-your posts. This blog will be linked in the navigation bar of each page, 
-and shite will generate a list in the first page of the blog with all 
-your posts and date.
-
-**shiterc** - where is set the name of the site, subtitle and footer text, 
-write these things in markdown, as done in the example.
-
-To post, run the script 
-
-    ./build.sh post
-
-**PLEASE. You should use this command at least to create the files.**
-
-this script will create a .md file in this directory with propper header and
-title.
-
-If you don't wanna a blog don't create this folder.
-
-## Building
-
-To build the whole site type:
-
-    ./build.sh
-
-It will delete the old built content, and generate a new one.
-
-To install the generated files type (it will copy the whole $DESTDIR to
-<PATH> usualy the server folder):
-
-    ./build && ./build install <PATH>
-
-or simply:
-
-	cp -R $DESTDIR/* /foo/bar/server/
-
-You can work on github hosting by putting these files in a .foo/ dir and
-add it to the gitignore, then your <PATH> will be ../
-it will generate and copy the content of $DESTDIR to PATH.
-
-To only clean and exit do:
-
-    ./build.sh clean
+Information about usage, files and other things on the manpage, please read
+it after using shite
 
 ### Site style:
 
@@ -79,25 +29,23 @@ If your generated website is ugly, don't worry, editing the CSS file can solve a
 your problems. Read the generated files, to see the tags used and edit
 it. I am working to make a good default style.css.
 
-*Also don't forget, the script is easy to understand, so just adjust
-it, and send the changes back if you wanna contribute*
-
 ### TODO
+
 - [x] Improve style.css and general style
 
 - [x] Full navigation bar links on blog files
 
-- [ ] Remove some variables from the script, making it universal and
+- [x] Remove some variables from the script, making it universal and
   installable (almost done, there still DESTDIR, MARKDOWN, SRCDIR ...)
 
-- [ ] Link on navigation bar
+- [x] Link on navigation bar
 
-- [ ] Make it works with distant folders
+- [x] Make it works with distant folders
 
-- [ ] Manpage
+- [x] Manpage
 
 - [ ] Indent code
 
 ### Contact
-Please send me patches, suggestions and any other things to:
+Please send patches, suggestions and any other things to:
 <henriqueleng@openmailbox.org>
