@@ -1,0 +1,19 @@
+TODO
+----
+
+- [x] Improve style.css and general style
+
+- [x] Full navigation bar links on blog files
+
+- [x] Remove some variables from the script, making it universal and
+  installable (almost done, there still DESTDIR, MARKDOWN, SRCDIR ...)
+
+- [x] Link on navigation bar
+
+- [x] Make it works with distant folders
+
+- [x] Manpage
+
+- [ ] Indent code
+
+- [ ] break long lines?

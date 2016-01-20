@@ -1,0 +1,21 @@
+shite - posix shell, static site generator.
+===========================================
+
+This is a simple static-site generator made to build my personal site:
+(http://www.henriquelengler.com)
+
+It is made entirely posix shell + posix tools (sed, ls, wc, echo, cat
+...), *if something fail in your system, please tell me*.
+
+The only extra tools you will need is a markdown processor, and a text editor.
+
+Installing
+----------
+Just edit the variables on the Makefile and run 
+
+    # make install
+
+Usage
+-----
+
+Info about usage, examples and other things on the manpage, please read it.
