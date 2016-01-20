@@ -46,6 +46,8 @@ it. I am working to make a good default style.css.
 
 - [ ] Indent code
 
+- [ ] break long lines?
+
 ### Contact
 Please send patches, suggestions and any other things to:
 <henriqueleng@openmailbox.org>

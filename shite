@@ -1,10 +1,6 @@
 #!/bin/sh
-DESTDIR='site.dest'
-SRCDIR='examples/site.source'
 CSSFILE='style.css'
 BLOGDIR='blog'
-
-MARKDOWN=smu
 
 header() { #$1 = css location, $2 favicon location, $3 index location
 cat <<!__EOF__
@@ -41,54 +37,77 @@ cat <<!__EOF__
 !__EOF__
 }
 
-clean() {
-	rm -rf $DESTDIR
-}
-
-# START #
-if [ "$1" == "clean" ]
-then
-	clean
+# PARSE FLAGS #
+if [ "$1" == "-h" ] || [ "$1" == "" ]; then
+	echo "usage: $0 [-p] SRCDIR DESTDIR"
 	exit
 
-elif [ "$1" == "install" ]
-then
-	cp -R $DESTDIR/* $2
-	exit
-
-elif [ "$1" == "-h" ]
-then
-	echo "usage: $0 [clean/post] [install <PATH>]"
-	exit
-
-elif [ "$1" == "post" ]
-then
-	EDITOR=$(printenv EDITOR)
-
-	if [ "$EDITOR" == "" ]
-	then
-		echo 'No $EDITOR, set it to use this function'
-	exit
+elif [ "$1" == "-p" ]; then
+	if [ "$2" == "" ] || [ "$3" == "" ]; then
+		echo "you must specify both, SRCDIR and DESTDIR"
+		exit
+	else
+		DESTDIR="$3"
+		SRCDIR="$2"
+	fi
+		PFLAG=1
+else
+	if [ "$1" != "" ] && [ "$2" == "" ]; then
+		echo you must specify a DESTDIR
+		exit
+	else
+		SRCDIR="$1"
+		DESTDIR="$2"
+	fi
 fi
 
-number=$(ls -1 $SRCDIR/$BLOGDIR | wc -l )
+MARKDOWN=$(printenv MARKDOWN)
+if [ "$MARKDOWN" == "" ]
+then
+        echo "markdown processor not found: set MARKDOWN"
+        exit
+fi
 
-echo 'Name of the post:'
-read TITLE
-date=$(date "+%Y/%m/%d")
+CURRENTDIR=$(pwd)
 
-filename="$(($number + 1))-$(echo $TITLE | sed s/' '/'-'/g)"
+# get full path
+if [ ! -d "$SRCDIR" ]; then
+	echo "can't enter source dir"
+	exit
+else
+	SRCDIR=$(cd $SRCDIR && pwd && cd $CURRENTDIR)
+	echo "source dir path is: $SRCDIR"
+fi
 
-cat <<!__EOF__ >> $SRCDIR/$BLOGDIR/$filename.md
+mkdir -p $DESTDIR
+DESTDIR=$(cd $DESTDIR && pwd && cd $CURRENTDIR)
+echo "destdir path is: $DESTDIR"
+
+if [ $PFLAG ]; then
+	EDITOR=$(printenv EDITOR)
+
+	if [ "$EDITOR" == "" ]; then
+		echo 'No $EDITOR, set it to use this function'
+		exit
+	fi
+
+	number=$(ls -1 $SRCDIR/$BLOGDIR | wc -l )
+
+	echo 'Name of the post:'
+	read TITLE
+	date=$(date "+%Y/%m/%d")
+
+	filename="$(($number + 1))-$(echo $TITLE | sed s/' '/'-'/g)"
+
+	cat <<!__EOF__ >> $SRCDIR/$BLOGDIR/$filename.md
 # $TITLE
 $date
 !__EOF__
-$EDITOR $SRCDIR/$BLOGDIR/$filename.md
+	$EDITOR $SRCDIR/$BLOGDIR/$filename.md
 fi
 
 ## BEGIN ##
-clean
-mkdir $DESTDIR
+echo DESTDIR OUT OF LOOP $DESTDIR
 touch $DESTDIR/index.html
 cp $SRCDIR/$CSSFILE $DESTDIR
 cp $SRCDIR/favicon.ico $DESTDIR
@@ -180,7 +199,8 @@ if [ $blog = 1 ]; then
 			cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/$file.html
 			posttitle=$(sed 1q $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
 			postdate=$(sed -n 2p $SRCDIR/$BLOGDIR/$file.md)
-			echo "       <li>$postdate - <a href="$file.html">$posttitle</a></li>" >> $DESTDIR/$BLOGDIR/index.html
+			echo "       <li>$postdate - <a href="$file.html">$posttitle</a></li>" >> \
+			$DESTDIR/$BLOGDIR/index.html
 			echo '     </ul>' >> $DESTDIR/$BLOGDIR/$file.html
 			echo "<h1 id="'"posttitle"'">$posttitle</h1>" >> $DESTDIR/$BLOGDIR/$file.html
 			echo "<h2 id="'"postdate"'">Written in: $postdate</h2>" >> $DESTDIR/$BLOGDIR/$file.html
@@ -198,5 +218,5 @@ if [ $blog = 1 ]; then
 	rm $HEADER
 
 	printf '\n\n'
-	echo "site builded, copy it to the server"
+	echo "site built, copy it to the server"
 fi
