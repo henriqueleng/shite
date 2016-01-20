@@ -6,7 +6,8 @@ This is a simple static-site generator made to build my personal site:
 It is made entirely posix shell + posix tools (sed, ls, wc, echo, cat
 ...), *if something fail in your system, please tell me*.
 
-The only extra tools you will need is a markdown processor, and a text editor.
+The only extra tools you will need is a markdown processor, that by
+default is smu (https://github.com/Gottox/smu), and a text editor.
 
 I decided to make it because I thought it was simple to create one and even
 that there is a lot "site-builders" in the internet, no one make a site the way
