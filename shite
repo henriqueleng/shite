@@ -145,7 +145,7 @@ ls -1 $SRCDIR | while read file; do
 	case $file in
 		*.md)
 			filename=$(echo $file | sed s/.md//)
-			header style.css favicon.ico index.html >> $DESTDIR/$filename.html
+			header style.css favicon.ico index.html > $DESTDIR/$filename.html
 			if [ $filename != "index" ]; then
 				barentry $filename.html $filename >> $HEADER
 				if [ $blog == 1 ]; then
@@ -169,7 +169,7 @@ ls -1 $SRCDIR | while read file; do
 	if [ $blogentries == 0 ]; then
 		echo addind blog to headers
 		mkdir $DESTDIR/$BLOGDIR
-		header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/index.html
+		header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/index.html
 		barentry $BLOGDIR/index.html $BLOGDIR >> $HEADER #blog entry on pages
 		barentry index.html $BLOGDIR >> $BLOGHEADER #blog entry on blog pages
 		blogentries=1
@@ -195,7 +195,7 @@ if [ $blog = 1 ]; then
 		echo '     <ul id="blogpost">' >> $DESTDIR/$BLOGDIR/index.html
 		ls -1 $SRCDIR/$BLOGDIR | grep .md | sed s/.md// | while read file; do
 			echo $file
-			header ../style.css ../favicon.ico ../index.html >> $DESTDIR/$BLOGDIR/$file.html
+			header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/$file.html
 			cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/$file.html
 			posttitle=$(sed 1q $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
 			postdate=$(sed -n 2p $SRCDIR/$BLOGDIR/$file.md)
