@@ -17,3 +17,9 @@ TODO
 - [ ] Indent code
 
 - [ ] break long lines?
+
+- [ ] organize code
+
+- [ ] fix flag usage: ex. -p don't need DESTDIR
+
+- [ ] organize problem checking and error logging
