@@ -1,7 +1,7 @@
 SHITE(1)		    General Commands Manual		      SHITE(1)
 
 NAME
-     shite - posix shell, static webpages generator
+     shite  posix shell, static webpages generator
 
 SYNOPSIS
      shite [-p] SRCDIR DESTDIR
@@ -17,7 +17,8 @@ DESCRIPTION
 
 OPTIONS
      -p	     Create a blogpost. It will ask for a title, get the date and open
-	     your editor on the new post file.
+	     your editor on the new post file. With this option you only need
+	     to specify the SRCDIR, if there isn't one, shite will create it.
 
 ENVIRONMENT
      MARKDOWN enviroment variable is used to generate html pages.  EDITOR will
