@@ -19,3 +19,13 @@ Usage
 -----
 
 Info about usage, examples and other things on the manpage, please read it.
+
+Site style:
+-----------
+If your generated website is ugly, don't worry, editing the CSS file can solve 
+all your problems. Read the generated files, to see the tags used and edit it.
+
+Contat
+------
+
+Please send me patches, suggestions and any other things to: henriqueleng@openmailbox.org
