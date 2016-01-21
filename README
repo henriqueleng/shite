@@ -1,7 +1,7 @@
-shite - posix shell, static site generator.
-===========================================
+shite - posix shell, static webpages generator.
+===============================================
 
-This is a simple static-site generator made to build my personal site:
+This is a simple static webpages generator made to build my personal site:
 (http://www.henriquelengler.com)
 
 It is made entirely posix shell + posix tools (sed, ls, wc, echo, cat

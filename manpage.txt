@@ -1,7 +1,7 @@
 SHITE(1)		    General Commands Manual		      SHITE(1)
 
 NAME
-     shite - posix shell, static site generator
+     shite - posix shell, static webpages generator
 
 SYNOPSIS
      shite [-p] SRCDIR DESTDIR
