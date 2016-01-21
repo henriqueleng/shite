@@ -43,17 +43,16 @@ if [ "$1" == "-h" ] || [ "$1" == "" ]; then
 	exit
 
 elif [ "$1" == "-p" ]; then
-	if [ "$2" == "" ] || [ "$3" == "" ]; then
-		echo "you must specify both, SRCDIR and DESTDIR"
+	if [ "$2" == "" ]; then
+		echo 'you must specify the SRCDIR'
 		exit
 	else
-		DESTDIR="$3"
 		SRCDIR="$2"
 	fi
 		PFLAG=1
 else
-	if [ "$1" != "" ] && [ "$2" == "" ]; then
-		echo you must specify a DESTDIR
+	if [ "$2" == "" ]; then
+		echo 'you must specify a DESTDIR'
 		exit
 	else
 		SRCDIR="$1"
@@ -61,33 +60,37 @@ else
 	fi
 fi
 
-MARKDOWN=$(printenv MARKDOWN)
-if [ "$MARKDOWN" == "" ]
-then
-        echo "markdown processor not found: set MARKDOWN"
-        exit
-fi
-
-CURRENTDIR=$(pwd)
-
-# get full path
+# test dirs
+# src - allways needed
 if [ ! -d "$SRCDIR" ]; then
-	echo "can't enter source dir"
+	echo "$SRCDIR isn't a directory, please check it"
 	exit
 else
 	SRCDIR=$(cd $SRCDIR && pwd && cd $CURRENTDIR)
-	echo "source dir path is: $SRCDIR"
+	echo "SRCDIR path: $SRCDIR"
 fi
 
-mkdir -p $DESTDIR
-DESTDIR=$(cd $DESTDIR && pwd && cd $CURRENTDIR)
-echo "destdir path is: $DESTDIR"
+# blog
+if [ -d "$SRCDIR/$BLOGDIR" ]; then
+	blog=1
+	BLOGHEADER=$(mktemp -t shite-blogheader.XXXXXX)
+	blogentries=0
+else #no blog
+	if [ $PFLAG ]; then
+		mkdir $SRCDIR/$BLOGDIR
+		echo 'there was no blog, created it'
+		blog=1
+	else
+		echo 'no blog, not building it'
+		blog=0
+	fi
+fi
 
-if [ $PFLAG ]; then
+if [ $PFLAG ]; then # continue pflag
 	EDITOR=$(printenv EDITOR)
 
 	if [ "$EDITOR" == "" ]; then
-		echo 'No $EDITOR, set it to use this function'
+		echo 'no $EDITOR, set it to use this function'
 		exit
 	fi
 
@@ -103,35 +106,48 @@ if [ $PFLAG ]; then
 # $TITLE
 $date
 !__EOF__
-	$EDITOR $SRCDIR/$BLOGDIR/$filename.md
+    $EDITOR $SRCDIR/$BLOGDIR/$filename.md
+
+    echo 'post created. now, build your site'
+	exit
 fi
 
-## BEGIN ##
-echo DESTDIR OUT OF LOOP $DESTDIR
+# check markdown
+MARKDOWN=$(printenv MARKDOWN)
+if [ "$MARKDOWN" == "" ]; then
+	echo 'markdown processor not found: set MARKDOWN'
+	exit
+else
+	echo "markdown processor is: $MARKDOWN"
+fi
+
+# check shiterc
+if [ -f $SRCDIR/shiterc ]; then
+	echo 'found shiterc, parsing it'
+	. $SRCDIR/shiterc
+	echo "parsed from $SRCDIR/shiterc:"
+	echo "title: $TITLE"
+	echo "subtitle: $SUBTITLE"
+	echo "footer: $FOOTER"
+	echo
+
+	TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+	SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+	FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
+else
+	echo didn\'t found shiterc, can\'t proceed without it
+	exit
+fi
+
+CURRENTDIR=$(pwd)
+
+mkdir -p $DESTDIR
+DESTDIR=$(cd $DESTDIR && pwd && cd $CURRENTDIR)
+echo "destdir path is: $DESTDIR"
+
 touch $DESTDIR/index.html
 cp $SRCDIR/$CSSFILE $DESTDIR
 cp $SRCDIR/favicon.ico $DESTDIR
-
-# parse site configs:
-. $SRCDIR/shiterc
-echo "parsed from $SRCDIR/shiterc"
-echo "title: $TITLE"
-echo "subtitle: $SUBTITLE"
-echo "footer: $FOOTER"
-echo
-
-TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
-
-# check for blog
-if [ -d "$SRCDIR/$BLOGDIR" ]; then
-	blog=1
-	BLOGHEADER=$(mktemp -t shite-blogheader.XXXXXX)
-	blogentries=0
-else
-	echo "there is no blog, not building it"
-fi
 
 HEADER=$(mktemp shite-header.XXXXXX)
 
@@ -167,7 +183,7 @@ ls -1 $SRCDIR | while read file; do
 	esac
 
 	if [ $blogentries == 0 ]; then
-		echo addind blog to headers
+		echo adding blog to headers
 		mkdir $DESTDIR/$BLOGDIR
 		header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/index.html
 		barentry $BLOGDIR/index.html $BLOGDIR >> $HEADER #blog entry on pages
@@ -178,7 +194,7 @@ done
 
 ls -1 $SRCDIR | grep md | sed s/.md// | while read file; do
 	cat $HEADER >> $DESTDIR/$file.html
-        echo '     </ul>' >> $DESTDIR/$file.html
+	echo '     </ul>' >> $DESTDIR/$file.html
 	$MARKDOWN < $SRCDIR/$file.md >> $DESTDIR/$file.html
 	footer >> $DESTDIR/$file.html
 done
@@ -209,7 +225,7 @@ if [ $blog = 1 ]; then
 		done
 		echo '     </ul>' >> $DESTDIR/$BLOGDIR/index.html
 	else
-	   echo '<p id="warn">No posts yet</p>' >> $DESTDIR/$BLOGDIR/index.html
+		echo '<p id="warn">No posts yet</p>' >> $DESTDIR/$BLOGDIR/index.html
 	fi
 	footer >> $DESTDIR/$BLOGDIR/index.html
 
