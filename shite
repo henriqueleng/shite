@@ -106,9 +106,9 @@ if [ $PFLAG ]; then # continue pflag
 # $TITLE
 $date
 !__EOF__
-    $EDITOR $SRCDIR/$BLOGDIR/$filename.md
+	$EDITOR $SRCDIR/$BLOGDIR/$filename.md
 
-    echo 'post created. now, build your site'
+	echo 'post created. now, build your site'
 	exit
 fi
 
