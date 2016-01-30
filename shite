@@ -1,6 +1,7 @@
 #!/bin/sh
 CSSFILE='style.css'
 BLOGDIR='blog'
+CURRENTDIR=$(pwd)
 
 header() { #$1 = css location, $2 favicon location, $3 index location
 cat <<!__EOF__
@@ -139,8 +140,6 @@ else
 	exit
 fi
 
-CURRENTDIR=$(pwd)
-
 mkdir -p $DESTDIR
 DESTDIR=$(cd $DESTDIR && pwd && cd $CURRENTDIR)
 echo "destdir path is: $DESTDIR"
@@ -152,12 +151,6 @@ cp $SRCDIR/favicon.ico $DESTDIR
 HEADER=$(mktemp shite-header.XXXXXX)
 
 ls -1 $SRCDIR | while read file; do
-	if [ $blog == 1 ]; then
-		if [ "$file" == "$BLOGDIR" ]; then
-			echo blog detected!
-		fi
-	fi
-
 	case $file in
 		*.md)
 			filename=$(echo $file | sed s/.md//)
@@ -181,7 +174,7 @@ ls -1 $SRCDIR | while read file; do
 			;;
 	esac
 
-	if [ $blogentries == 0 ]; then
+	if [[ $blog == 1 && $blogentries == 0 ]]; then
 		echo adding blog to headers
 		mkdir $DESTDIR/$BLOGDIR
 		header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/index.html
