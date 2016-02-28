@@ -174,7 +174,7 @@ ls -1 $SRCDIR | while read file; do
 			;;
 	esac
 
-	if [[ $blog == 1 && $blogentries == 0 ]]; then
+	if [ $blog == 1 ] && [ $blogentries == 0 ]; then
 		echo adding blog to headers
 		mkdir $DESTDIR/$BLOGDIR
 		header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/index.html
