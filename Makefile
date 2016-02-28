@@ -5,23 +5,24 @@ MANDIR      = ${PREFIX}/man
 MAN1DIR     = ${MANDIR}/man1
 
 BIN = shite
+SRC = shite.sh
 MANPAGE = ${BIN}.1
 
-all:
-	@echo test 
-	@exit
+all: $(BIN)
 
-install:
-	@mkdir -p ${BINDIR}
-	@mkdir -p ${MAN1DIR}
+$(BIN):
+	cp $(SRC) $(BIN)
 
-	@install -d ${BINDIR} ${MAN1DIR}
-	@install -m 775 ${BIN} ${BINDIR}
-	@install -m 444 ${MANPAGE} ${MAN1DIR}
-	@echo "installed ${BIN}"
+install: all
+	mkdir -p $(BINDIR) 
+	cp -f $(BIN) $(BINDIR)
+	mkdir -p $(MAN1DIR)
+	cp -f $(MANPAGE) $(MAN1DIR) 
 
 uninstall:
 	@rm -f ${MAN1DIR}/${MANPAGE}
-	@rm -rf ${DOCDIR}
 	@rm -f ${BINDIR}/${BIN}
 	@echo "uninstalled ${BIN}"
+
+clean:
+	rm -rf $(BIN)
