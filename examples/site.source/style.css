@@ -8,7 +8,6 @@ format('truetype');
 }
 
 body {
-	text-align:center;
 	font-family: 'Inconsolata', sans-serif;
 	width:90%;
 	max-width:650px;
