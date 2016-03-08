@@ -60,6 +60,7 @@ EXAMPLES
      server dir, for example:
 
      shite share/mysite /var/www/htdocs/...
+
      To simplify everything you can add add an alias like 'alias buildsite='shite foo bar''
      or create a script and add it to crontab to automatically build and upload to the server.
 
@@ -70,8 +71,7 @@ AUTHORS
      Henrique N. Lengler <henriqueleng@openmailbox.org>
 
 SECURITY CONSIDERATIONS
-     This software runs a lot of commands and can cause damage to the system,
-     since it is a new piece and probably there still some bugs to be found:
-     So please use with caution.
+     shite should not delete any files, only overwrite used files.  Also it
+     doesn't delete anything on the file sytem.
 
 OpenBSD 5.9			     2016			   OpenBSD 5.9

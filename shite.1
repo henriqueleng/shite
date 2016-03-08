@@ -70,6 +70,7 @@ it in place), edit shiterc, remove the blogposts or just edit them. After that
 run shite to build it, you can point directly to a server dir, for example:
 .Bd -literal -offset left
 .Nm Pa share/mysite /var/www/htdocs/...
+.Pp
 To simplify everything you can add add an alias like 'alias buildsite='shite foo bar''
 or create a script and add it to crontab to automatically build and upload to the server.
 .Ed
@@ -78,5 +79,6 @@ or create a script and add it to crontab to automatically build and upload to th
 .Sh AUTHORS
 .An Henrique N. Lengler Aq Mt henriqueleng@openmailbox.org
 .Sh SECURITY CONSIDERATIONS
-This software runs a lot of commands and can cause damage to the system, since it 
-is a new piece and probably there still some bugs to be found: So please use with caution.
+.Nm
+should not delete any files, only overwrite used files.
+Also it doesn't delete anything on the file sytem.
