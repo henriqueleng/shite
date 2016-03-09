@@ -203,7 +203,7 @@ if [ $blog = 1 ]; then
 
 		echo "posts detected:"
 		echo '		<ul id="blogpost">' >> $DESTDIR/$BLOGDIR/index.html
-		ls -1 $SRCDIR/$BLOGDIR | grep .md | sed s/.md// | while read file; do
+		ls -1r $SRCDIR/$BLOGDIR | grep .md | sed s/.md// | while read file; do
 			header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/$file.html
 			cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/$file.html
 			posttitle=$(sed 1q $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
