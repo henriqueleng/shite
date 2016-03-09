@@ -1,6 +1,10 @@
 TODO
 ----
 
+- [ ] break long lines?
+
+- [ ] default style for tables, code...
+
 - [x] Improve style.css and general style
 
 - [x] Full navigation bar links on blog files
@@ -13,7 +17,5 @@ TODO
 - [x] Make it works with distant folders
 
 - [x] Manpage
-
-- [ ] break long lines?
 
 - [*] fix flag usage: ex. -p don't need DESTDIR
