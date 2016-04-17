@@ -71,7 +71,6 @@ AUTHORS
      Henrique N. Lengler <henriqueleng@openmailbox.org>
 
 SECURITY CONSIDERATIONS
-     shite should not delete any files, only overwrite used files.  Also it
-     doesn't delete anything on the file sytem.
+     shite should not delete any files, only overwrite used files.
 
 OpenBSD 5.9			     2016			   OpenBSD 5.9
