@@ -230,5 +230,5 @@ if [ $blog = 1 ]; then
 	rm $HEADER
 
 	printf '\n'
-	echo "site built"
+	echo "site built, copy it to the server"
 fi
