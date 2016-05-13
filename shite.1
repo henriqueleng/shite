@@ -73,6 +73,13 @@ run shite to build it, you can point directly to a server dir, for example:
 .Pp
 To simplify everything you can add add an alias like 'alias buildsite='shite foo bar''
 or create a script and add it to crontab to automatically build and upload to the server.
+.Sh SHITERC
+Your site 
+.Em must
+have a shiterc file on it, this file will contain the TITLE, SUBTITLE, FOOTER
+and BLOGDIR info of your site.
+You can ignore BLOGDIR if you don't have one. You can set BLOGDIR to anything
+you want the page with your articles to be called.
 .Ed
 .Sh SEE ALSO
 .Xr smu 1

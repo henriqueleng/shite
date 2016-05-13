@@ -1,6 +1,5 @@
 #!/bin/sh
 CSSFILE='style.css'
-BLOGDIR='blog'
 CURRENTDIR=$(pwd)
 
 header() { #$1 = css location, $2 favicon location, $3 index location
@@ -40,7 +39,7 @@ cat <<!__EOF__
 !__EOF__
 }
 
-# PARSE FLAGS #
+# PARSE FLAGS AND FOLDERS
 if [ "$1" == "-h" ] || [ "$1" == "" ]; then
 	echo "usage: $0 [-p] SRCDIR DESTDIR"
 	exit
@@ -63,6 +62,25 @@ else
 	fi
 fi
 
+# check shiterc
+if [ -f $SRCDIR/shiterc ]; then
+	echo 'found shiterc, parsing it'
+	. $SRCDIR/shiterc
+	echo "parsed from $SRCDIR/shiterc:"
+	echo "title: $TITLE"
+	echo "subtitle: $SUBTITLE"
+	echo "footer: $FOOTER"'\n'
+	echo "blogdir: $BLOGDIR"'\n'
+
+	TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+	SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+	FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
+else
+	echo "didn't found shiterc, can't proceed without it"
+	exit
+fi
+
+
 # test dirs
 # src - allways needed
 if [ ! -d "$SRCDIR" ]; then
@@ -74,6 +92,7 @@ else
 fi
 
 # blog
+echo blog dir: "$SRCDIR/$BLOGDIR"
 if [ -d "$SRCDIR/$BLOGDIR" ]; then
 	blog=1
 	BLOGHEADER=$(mktemp -t shite-blogheader.XXXXXX)
@@ -122,23 +141,6 @@ if [ "$MARKDOWN" == "" ]; then
 	exit
 else
 	echo "markdown processor is: $MARKDOWN"
-fi
-
-# check shiterc
-if [ -f $SRCDIR/shiterc ]; then
-	echo 'found shiterc, parsing it'
-	. $SRCDIR/shiterc
-	echo "parsed from $SRCDIR/shiterc:"
-	echo "title: $TITLE"
-	echo "subtitle: $SUBTITLE"
-	echo "footer: $FOOTER"'\n'
-
-	TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-	SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-	FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
-else
-	echo "didn't found shiterc, can't proceed without it"
-	exit
 fi
 
 mkdir -p $DESTDIR

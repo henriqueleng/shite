@@ -1,3 +1,4 @@
 TITLE='Sample Title'
 SUBTITLE='Personal page'
 FOOTER='Hosted in [Github](http://github.com)'
+BLOGDIR='posts'

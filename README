@@ -64,6 +64,12 @@ EXAMPLES
      To simplify everything you can add add an alias like 'alias buildsite='shite foo bar''
      or create a script and add it to crontab to automatically build and upload to the server.
 
+SHITERC
+     Your site must have a shiterc file on it, this file will contain the
+     TITLE, SUBTITLE, FOOTER and BLOGDIR info of your site.  You can ignore
+     BLOGDIR if you don't have one. You can set BLOGDIR to anything you want
+     the page with your articles to be called.
+
 SEE ALSO
      smu(1)
 
