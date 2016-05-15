@@ -13,7 +13,7 @@ all: $(BIN)
 $(BIN):
 	cp $(SRC) $(BIN)
 
-install: all
+install: clean all
 	mkdir -p $(BINDIR) 
 	cp -f $(BIN) $(BINDIR)
 	mkdir -p $(MAN1DIR)

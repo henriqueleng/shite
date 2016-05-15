@@ -39,6 +39,11 @@ cat <<!__EOF__
 !__EOF__
 }
 
+die() {
+	echo $@ >&2
+	exit 1
+}
+
 # PARSE FLAGS AND FOLDERS
 if [ "$1" == "-h" ] || [ "$1" == "" ]; then
 	echo "usage: $0 [-p] SRCDIR DESTDIR"
@@ -46,16 +51,14 @@ if [ "$1" == "-h" ] || [ "$1" == "" ]; then
 
 elif [ "$1" == "-p" ]; then
 	if [ "$2" == "" ]; then
-		echo 'you must specify the SRCDIR'
-		exit
+		die 'you must specify the SRCDIR'
 	else
 		SRCDIR="$2"
 	fi
 		PFLAG=1
 else
 	if [ "$2" == "" ]; then
-		echo 'you must specify a DESTDIR'
-		exit
+		die 'you must specify a DESTDIR'
 	else
 		SRCDIR="$1"
 		DESTDIR="$2"
@@ -71,21 +74,15 @@ if [ -f $SRCDIR/shiterc ]; then
 	echo "subtitle: $SUBTITLE"
 	echo "footer: $FOOTER"'\n'
 	echo "blogdir: $BLOGDIR"'\n'
-
-	TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-	SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-	FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
 else
-	echo "didn't found shiterc, can't proceed without it"
-	exit
+	die "didn't found shiterc, can't proceed without it"
 fi
 
 
 # test dirs
 # src - allways needed
 if [ ! -d "$SRCDIR" ]; then
-	echo "$SRCDIR isn't a directory, please check it"
-	exit
+	die "$SRCDIR isn't a directory, please check it"
 else
 	SRCDIR=$(cd $SRCDIR && pwd && cd $CURRENTDIR)
 	echo "SRCDIR path: $SRCDIR"
@@ -112,8 +109,7 @@ if [ $PFLAG ]; then # continue pflag
 	EDITOR=$(printenv EDITOR)
 
 	if [ "$EDITOR" == "" ]; then
-		echo 'no $EDITOR, set it to use this function'
-		exit
+		die 'no $EDITOR, set it to use this function'
 	fi
 
 	number=$(ls -1 $SRCDIR/$BLOGDIR | wc -l )
@@ -131,16 +127,22 @@ $date
 	$EDITOR $SRCDIR/$BLOGDIR/$filename.md
 
 	echo 'post created. now, build your site'
-	exit
+	exit 0
 fi
 
 # check markdown
 MARKDOWN=$(printenv MARKDOWN)
 if [ "$MARKDOWN" == "" ]; then
-	echo 'markdown processor not found: set MARKDOWN'
-	exit
+	die "couldn't build site, markdown processor not found: set MARKDOWN"
 else
-	echo "markdown processor is: $MARKDOWN"
+	if $(type $MARKDOWN >/dev/null 2>&1); then
+		echo "markdown processor is: $MARKDOWN"
+		TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+		SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
+		FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
+	else
+		die " MARKDOWN isn't a suitable binary"
+	fi
 fi
 
 mkdir -p $DESTDIR
@@ -227,11 +229,9 @@ if [ $blog = 1 ]; then
 		echo '<p id="warn">No posts yet</p>' >> $DESTDIR/$BLOGDIR/index.html
 	fi
 	footer >> $DESTDIR/$BLOGDIR/index.html
-
-	echo cleaning tmp files
 	rm $BLOGHEADER
+fi
 	rm $HEADER
-
 	printf '\n'
 	echo "site built"
-fi
+	exit 0
