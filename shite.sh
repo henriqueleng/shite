@@ -156,82 +156,83 @@ cp $SRCDIR/favicon.ico $DESTDIR
 HEADER=$(mktemp shite-header.XXXXXX)
 
 ls -1 $SRCDIR | while read file; do
-	case $file in
+	case "$file" in
 		*.md)
-			filename=$(echo $file | sed s/.md//)
-			header style.css favicon.ico index.html > $DESTDIR/$filename.html
-			if [ $filename != "index" ]; then
-				barentry $filename.html $filename >> $HEADER
+			filename=$(echo "$file" | sed s/.md//)
+			header style.css favicon.ico index.html > "$DESTDIR/$filename.html"
+			if [ "$filename" != "index" ]; then
+				barentry "$filename.html" "$filename" >> "$HEADER"
+				echo "haha $filename"
 				if [ $blog == 1 ]; then
-					barentry ../$filename.html $filename >> $BLOGHEADER
+					barentry "../$filename.html" "$filename" >> "$BLOGHEADER"
 				fi
 			fi
 			;;
 
 		*.link)
 			echo "link file found: $file"
-			filename=$(echo $file | sed s/.link//)
-			url=$(sed 1q $SRCDIR/$file)
-			barentry $url $filename >> $HEADER
+			filename=$(echo "$file" | sed s/.link//)
+			url=$(sed 1q "$SRCDIR/$file")
+			barentry $url "$filename" >> "$HEADER"
 			if [ $blog == 1 ]; then
-				barentry $url $filename >> $BLOGHEADER
+				barentry "$url" "$filename" >> "$BLOGHEADER"
 			fi
 			;;
 	esac
 
 	if [ $blog == 1 ] && [ $blogentries == 0 ]; then
 		echo adding blog to headers
-		mkdir $DESTDIR/$BLOGDIR
-		header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/index.html
-		barentry $BLOGDIR/index.html $BLOGDIR >> $HEADER #blog entry on pages
-		barentry index.html $BLOGDIR >> $BLOGHEADER #blog entry on blog pages
+		mkdir "$DESTDIR/$BLOGDIR"
+		header ../style.css ../favicon.ico ../index.html > "$DESTDIR/$BLOGDIR/index.html"
+		barentry "$BLOGDIR/index.html" "$BLOGDIR" >> "$HEADER"
+		barentry index.html "$BLOGDIR" >> "$BLOGHEADER"
 		blogentries=1
 	fi
 done 
 
-ls -1 $SRCDIR | grep md | sed s/.md// | while read file; do
-	cat $HEADER >> $DESTDIR/$file.html
-	echo '		</ul>' >> $DESTDIR/$file.html
-	echo '\n\n<!--Begin markdown generated content-->\n\n' >> $DESTDIR/$file.html
+ls -1 "$SRCDIR" | grep md | sed s/.md// | while read file; do
+	cat "$HEADER" >> "$DESTDIR/$file.html"
+	echo '		</ul>' >> "$DESTDIR/$file.html"
+	echo '\n\n<!--Begin markdown generated content-->\n\n' >> "$DESTDIR/$file.html"
 	$MARKDOWN < $SRCDIR/$file.md >> $DESTDIR/$file.html
-	echo '\n\n<!--End markdown generated content-->\n\n' >> $DESTDIR/$file.html
-	footer >> $DESTDIR/$file.html
+	echo '\n\n<!--End markdown generated content-->\n\n' >> "$DESTDIR/$file.html"
+	footer >> "$DESTDIR/$file.html"
 done
 
 if [ $blog = 1 ]; then
 	echo adding header to blog 
-	cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/index.html
-	echo '		</ul>' >> $DESTDIR/$BLOGDIR/index.html
+	cat $BLOGHEADER >> "$DESTDIR/$BLOGDIR/index.html"
+	echo '		</ul>' >> "$DESTDIR/$BLOGDIR/index.html"
 
 	if [ "$(ls -A $SRCDIR/$BLOGDIR)" ]; then
 		echo "blog not empty, building posts"
 
 		echo "posts detected:"
-		echo '		<ul id="blogpost">' >> $DESTDIR/$BLOGDIR/index.html
-		ls -1r $SRCDIR/$BLOGDIR | grep .md | sed s/.md// | while read file; do
-			header ../style.css ../favicon.ico ../index.html > $DESTDIR/$BLOGDIR/$file.html
-			cat $BLOGHEADER >> $DESTDIR/$BLOGDIR/$file.html
-			posttitle=$(sed 1q $SRCDIR/$BLOGDIR/$file.md | sed s/#//)
-			postdate=$(sed -n 2p $SRCDIR/$BLOGDIR/$file.md)
+		echo '		<ul id="blogpost">' >> "$DESTDIR/$BLOGDIR/index.html"
+		ls -1r "$SRCDIR/$BLOGDIR" | grep .md | sed s/.md// | while read file; do
+			header ../style.css ../favicon.ico ../index.html > "$DESTDIR/$BLOGDIR/$file.html"
+			cat "$BLOGHEADER" >> "$DESTDIR/$BLOGDIR/$file.html"
+			posttitle=$(sed 1q "$SRCDIR/$BLOGDIR/$file.md" | sed s/#//)
+			postdate=$(sed -n 2p "$SRCDIR/$BLOGDIR/$file.md")
 			echo "			<li>$postdate - <a href="$file.html">$posttitle</a></li>" >> \
-			$DESTDIR/$BLOGDIR/index.html
-			echo '		</ul>' >> $DESTDIR/$BLOGDIR/$file.html
-			echo "<h1 id="'"posttitle"'">$posttitle</h1>" >> $DESTDIR/$BLOGDIR/$file.html
-			echo "<h2 id="'"postdate"'">Written in: $postdate</h2>" >> $DESTDIR/$BLOGDIR/$file.html
+			"$DESTDIR/$BLOGDIR/index.html"
+			echo '		</ul>' >> "$DESTDIR/$BLOGDIR/$file.html"
+			echo "<h1 id="'"posttitle"'">$posttitle</h1>" >> "$DESTDIR/$BLOGDIR/$file.html"
+			echo "<h2 id="'"postdate"'">Written in: $postdate</h2>" >> "$DESTDIR/$BLOGDIR/$file.html"
 			echo "MARKDOWN: $file"
-			echo '\n\n<!--Begin markdown generated content-->\n\n' >> $DESTDIR/$BLOGDIR/$file.html
-			sed 1,2d $SRCDIR/$BLOGDIR/$file.md | $MARKDOWN >> $DESTDIR/$BLOGDIR/$file.html
-			echo '\n\n<!--End markdown generated content-->\n\n' >> $DESTDIR/$BLOGDIR/$file.html
-			footer >> $DESTDIR/$BLOGDIR/$file.html
+			echo '\n\n<!--Begin markdown generated content-->\n\n' >> "$DESTDIR/$BLOGDIR/$file.html"
+			sed 1,2d $SRCDIR/$BLOGDIR/$file.md | $MARKDOWN >> "$DESTDIR/$BLOGDIR/$file.html"
+			echo '\n\n<!--End markdown generated content-->\n\n' >> "$DESTDIR/$BLOGDIR/$file.html"
+			footer >> "$DESTDIR/$BLOGDIR/$file.html"
 		done
-		echo '		</ul>' >> $DESTDIR/$BLOGDIR/index.html
+		echo '		</ul>' >> "$DESTDIR/$BLOGDIR/index.html"
 	else
-		echo '<p id="warn">No posts yet</p>' >> $DESTDIR/$BLOGDIR/index.html
+		echo '<p id="warn">No posts yet</p>' >> "$DESTDIR/$BLOGDIR/index.html"
 	fi
-	footer >> $DESTDIR/$BLOGDIR/index.html
+	footer >> "$DESTDIR/$BLOGDIR/index.html"
 	rm $BLOGHEADER
 fi
-	rm $HEADER
+	rm "$HEADER"
 	printf '\n'
 	echo "site built"
 	exit 0
