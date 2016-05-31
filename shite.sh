@@ -69,7 +69,7 @@ fi
 if [ -f $SRCDIR/shiterc ]; then
 	echo 'found shiterc, parsing it'
 	. $SRCDIR/shiterc
-	echo "parsed from $SRCDIR/shiterc:"
+	echo "parsed from $SRCDIR""shiterc"
 	echo "title: $TITLE"
 	echo "subtitle: $SUBTITLE"
 	echo "footer: $FOOTER"'\n'
