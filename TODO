@@ -5,7 +5,7 @@ TODO
 
 - [ ] default style for tables, code...
 
-- [ ] handle file names with spaces
+- [x] handle file names with spaces
 
 - [x] Improve style.css and general style
 
