@@ -1,7 +1,6 @@
 #!/bin/sh
 CSSFILE='style.css'
 CURRENTDIR=$(pwd)
-
 header() { #$1 = css location, $2 favicon location, $3 index location
 cat <<!__EOF__
 <!DOCTYPE html>
@@ -182,7 +181,8 @@ ls -1 $SRCDIR | while read file; do
 	if [ $blog == 1 ] && [ $blogentries == 0 ]; then
 		echo adding blog to headers
 		mkdir "$DESTDIR/$BLOGDIR"
-		header ../style.css ../favicon.ico ../index.html > "$DESTDIR/$BLOGDIR/index.html"
+		header ../style.css ../favicon.ico ../index.html > \
+			"$DESTDIR/$BLOGDIR/index.html"
 		barentry "$BLOGDIR/index.html" "$BLOGDIR" >> "$HEADER"
 		barentry index.html "$BLOGDIR" >> "$BLOGHEADER"
 		blogentries=1
@@ -209,19 +209,26 @@ if [ $blog = 1 ]; then
 		echo "posts detected:"
 		echo '		<ul id="blogpost">' >> "$DESTDIR/$BLOGDIR/index.html"
 		ls -1r "$SRCDIR/$BLOGDIR" | grep .md | sed s/.md// | while read file; do
-			header ../style.css ../favicon.ico ../index.html > "$DESTDIR/$BLOGDIR/$file.html"
+			header ../style.css ../favicon.ico ../index.html > \
+				"$DESTDIR/$BLOGDIR/$file.html"
 			cat "$BLOGHEADER" >> "$DESTDIR/$BLOGDIR/$file.html"
 			posttitle=$(sed 1q "$SRCDIR/$BLOGDIR/$file.md" | sed s/#//)
 			postdate=$(sed -n 2p "$SRCDIR/$BLOGDIR/$file.md")
 			echo "			<li>$postdate - <a href="$file.html">$posttitle</a></li>" >> \
-			"$DESTDIR/$BLOGDIR/index.html"
+				"$DESTDIR/$BLOGDIR/index.html"
+
 			echo '		</ul>' >> "$DESTDIR/$BLOGDIR/$file.html"
-			echo "<h1 id="'"posttitle"'">$posttitle</h1>" >> "$DESTDIR/$BLOGDIR/$file.html"
-			echo "<h2 id="'"postdate"'">Written in: $postdate</h2>" >> "$DESTDIR/$BLOGDIR/$file.html"
+			echo "<h1 id="'"posttitle"'">$posttitle</h1>" >> \
+				"$DESTDIR/$BLOGDIR/$file.html"
+			echo "<h2 id="'"postdate"'">Written in: $postdate</h2>" >> \
+				"$DESTDIR/$BLOGDIR/$file.html"
 			echo "MARKDOWN: $file"
-			echo '\n\n<!--Begin markdown generated content-->\n\n' >> "$DESTDIR/$BLOGDIR/$file.html"
-			sed 1,2d $SRCDIR/$BLOGDIR/$file.md | $MARKDOWN >> "$DESTDIR/$BLOGDIR/$file.html"
-			echo '\n\n<!--End markdown generated content-->\n\n' >> "$DESTDIR/$BLOGDIR/$file.html"
+			echo '\n\n<!--Begin markdown generated content-->\n\n' >> \
+				"$DESTDIR/$BLOGDIR/$file.html"
+			sed 1,2d $SRCDIR/$BLOGDIR/$file.md | $MARKDOWN >> \
+				"$DESTDIR/$BLOGDIR/$file.html"
+			echo '\n\n<!--End markdown generated content-->\n\n' >> \
+				"$DESTDIR/$BLOGDIR/$file.html"
 			footer >> "$DESTDIR/$BLOGDIR/$file.html"
 		done
 		echo '		</ul>' >> "$DESTDIR/$BLOGDIR/index.html"

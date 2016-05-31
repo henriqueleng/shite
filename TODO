@@ -1,7 +1,7 @@
 TODO
 ----
 
-- [ ] break long lines?
+- [x] break long lines
 
 - [ ] default style for tables, code...
 
