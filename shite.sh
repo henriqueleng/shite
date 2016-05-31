@@ -162,7 +162,6 @@ ls -1 $SRCDIR | while read file; do
 			header style.css favicon.ico index.html > "$DESTDIR/$filename.html"
 			if [ "$filename" != "index" ]; then
 				barentry "$filename.html" "$filename" >> "$HEADER"
-				echo "haha $filename"
 				if [ $blog == 1 ]; then
 					barentry "../$filename.html" "$filename" >> "$BLOGHEADER"
 				fi
