@@ -5,6 +5,8 @@ TODO
 
 - [ ] default style for tables, code...
 
+- [ ] handle file names with spaces
+
 - [x] Improve style.css and general style
 
 - [x] Full navigation bar links on blog files
