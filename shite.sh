@@ -1,7 +1,7 @@
 #!/bin/sh
-CSSFILE='style.css'
-CURRENTDIR=$(pwd)
-header() { #$1 = css location, $2 favicon location, $3 index location
+cssfile='style.css'
+currentdir="$(pwd)"
+html_header() { #$1 = css location, $2 favicon location, $3 index location
 cat <<!__EOF__
 <!DOCTYPE html>
 <html>
@@ -10,22 +10,22 @@ cat <<!__EOF__
 		<meta name="viewport" content="width=device-width, initial-scale=0.7">
 		<link rel="stylesheet" href="$1">
 		<link rel="icon" href="$2" type="image/x-icon">
-		<title>$TITLE - $SUBTITLE</title>
+		<title>$title - $subtitle</title>
 	</head>
 	<body>
 		<header>
-			<h1 id="title"><a href=$3>$TITLE</a></h1>
-			<h2 id="subtitle">&mdash; $SUBTITLE</h2>
+			<h1 id="title"><a href=$3>$title</a></h1>
+			<h2 id="subtitle">&mdash; $subtitle</h2>
 		</header>
 		<ul id="nav">
 			<li><a href=$3>home</a></li>
 !__EOF__
 }
 
-footer() {
+html_footer() {
 cat <<!__EOF__
 		<footer>
-			<p> $FOOTER
+			<p> $footer
 		</footer>
 	</body>
 </html>
@@ -39,40 +39,40 @@ cat <<!__EOF__
 }
 
 die() {
-	echo $@ >&2
+	echo "$@" >&2
 	exit 1
 }
 
 # PARSE FLAGS AND FOLDERS
-if [ "$1" == "-h" ] || [ "$1" == "" ]; then
-	echo "usage: $0 [-p] SRCDIR DESTDIR"
+if [ "$1" = "-h" ] || [ "$1" = "" ]; then
+	echo usage: "$0" [-p] srcdir destdir
 	exit
 
-elif [ "$1" == "-p" ]; then
-	if [ "$2" == "" ]; then
-		die 'you must specify the SRCDIR'
+elif [ "$1" = "-p" ]; then
+	if [ "$2" = "" ]; then
+		die "you must specify the srcdir"
 	else
-		SRCDIR="$2"
+		srcdir="$2"
 	fi
 		PFLAG=1
 else
-	if [ "$2" == "" ]; then
-		die 'you must specify a DESTDIR'
+	if [ "$2" = "" ]; then
+		die "you must specify a destdir"
 	else
-		SRCDIR="$1"
-		DESTDIR="$2"
+		srcdir="$1"
+		destdir="$2"
 	fi
 fi
 
 # check shiterc
-if [ -f $SRCDIR/shiterc ]; then
+if [ -f "$srcdir"/shiterc ]; then
 	echo 'found shiterc, parsing it'
-	. $SRCDIR/shiterc
-	echo "parsed from $SRCDIR""shiterc"
-	echo "title: $TITLE"
-	echo "subtitle: $SUBTITLE"
-	echo "footer: $FOOTER"'\n'
-	echo "blogdir: $BLOGDIR"'\n'
+	. "$srcdir"/shiterc
+	echo parsed from "$srcdir""shiterc":
+	echo "\ttitle: $title"
+	echo "\tsubtitle: $subtitle"
+	echo "\tfooter: $footer"
+	echo "\tblogdir: $blogdir"
 else
 	die "didn't found shiterc, can't proceed without it"
 fi
@@ -80,22 +80,21 @@ fi
 
 # test dirs
 # src - allways needed
-if [ ! -d "$SRCDIR" ]; then
-	die "$SRCDIR isn't a directory, please check it"
+if [ ! -d "$srcdir" ]; then
+	die "$srcdir isn't a directory, please check it"
 else
-	SRCDIR=$(cd $SRCDIR && pwd && cd $CURRENTDIR)
-	echo "SRCDIR path: $SRCDIR"
+	srcdir="$(cd "$srcdir" && pwd && cd "$currentdir")"
+	echo source path: "$srcdir"
 fi
 
 # blog
-echo blog dir: "$SRCDIR/$BLOGDIR"
-if [ -d "$SRCDIR/$BLOGDIR" ]; then
+if [ -d "$srcdir"/"$blogdir" ]; then
 	blog=1
-	BLOGHEADER=$(mktemp -t shite-blogheader.XXXXXX)
+	blogheader="$(mktemp -t shite-blogheader.XXXXXX)"
 	blogentries=0
 else
 	if [ $PFLAG ]; then
-		mkdir $SRCDIR/$BLOGDIR
+		mkdir "$srcdir"/"$blogdir"
 		echo 'there was no blog, created it'
 		blog=1
 	else
@@ -105,140 +104,138 @@ else
 fi
 
 if [ $PFLAG ]; then # continue pflag
-	EDITOR=$(printenv EDITOR)
+	EDITOR="$(printenv EDITOR)"
 
-	if [ "$EDITOR" == "" ]; then
-		die 'no $EDITOR, set it to use this function'
+	if [ "$EDITOR" = "" ]; then
+		die "no '$EDITOR', set it to use this function"
 	fi
 
-	number=$(ls -1 $SRCDIR/$BLOGDIR | wc -l )
+	number="$(ls -1 "$srcdir"/"$blogdir" | wc -l )"
 
 	echo 'Name of the post:'
-	read TITLE
-	date=$(date "+%Y/%m/%d")
+	read -r title
+	date="$(date "+%Y/%m/%d")"
 
-	filename="$(($number + 1))-$(echo $TITLE | sed s/' '/'-'/g)"
+	filename="$(("$number" + 1))-$(echo "$title" | sed s/' '/'-'/g)"
 
-	cat <<!__EOF__ >> $SRCDIR/$BLOGDIR/$filename.md
-# $TITLE
+	cat <<!__EOF__ >> "$srcdir"/"$blogdir"/"$filename".md
+# $title
 $date
 !__EOF__
-	$EDITOR $SRCDIR/$BLOGDIR/$filename.md
+	"$EDITOR" "$srcdir"/"$blogdir"/"$filename".md
 
 	echo 'post created. now, build your site'
 	exit 0
 fi
 
 # check markdown
-MARKDOWN=$(printenv MARKDOWN)
-if [ "$MARKDOWN" == "" ]; then
+MARKDOWN="$(printenv MARKDOWN)"
+if [ "$MARKDOWN" = "" ]; then
 	die "couldn't build site, markdown processor not found: set MARKDOWN"
 else
-	if $(type $MARKDOWN >/dev/null 2>&1); then
-		echo "markdown processor is: $MARKDOWN"
-		TITLE=$(echo $TITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-		SUBTITLE=$(echo $SUBTITLE | $MARKDOWN | sed 's/<[^a>]*>//g')
-		FOOTER=$(echo $FOOTER | $MARKDOWN | sed 's/<[^a>]*>//g')
+	if type "$MARKDOWN" >/dev/null 2>&1; then
+		echo "markdown processor: $MARKDOWN"
+		title="$(echo "$title" | "$MARKDOWN" | sed 's/<[^a>]*>//g')"
+		subtitle="$(echo "$subtitle" | "$MARKDOWN" | sed 's/<[^a>]*>//g')"
+		footer="$(echo "$footer" | "$MARKDOWN" | sed 's/<[^a>]*>//g')"
 	else
-		die " MARKDOWN isn't a suitable binary"
+		die "MARKDOWN isn't a suitable binary"
 	fi
 fi
 
-mkdir -p $DESTDIR
-DESTDIR=$(cd $DESTDIR && pwd && cd $CURRENTDIR)
-echo "destdir path is: $DESTDIR"
+mkdir -p "$destdir"
+destdir="$(cd "$destdir" && pwd && cd "$currentdir")"
+echo "destination path: $destdir"
 
-touch $DESTDIR/index.html
-cp $SRCDIR/$CSSFILE $DESTDIR
-cp $SRCDIR/favicon.ico $DESTDIR
+touch "$destdir"/index.html
+cp "$srcdir"/"$cssfile" "$destdir"
+cp "$srcdir"/favicon.ico "$destdir"
 
-HEADER=$(mktemp shite-header.XXXXXX)
+header="$(mktemp shite-header.XXXXXX)"
 
-ls -1 $SRCDIR | while read file; do
+ls -1 "$srcdir" | while read -r file; do
 	case "$file" in
 		*.md)
-			filename=$(echo "$file" | sed s/.md//)
-			header style.css favicon.ico index.html > "$DESTDIR/$filename.html"
+			filename="$(echo "$file" | sed s/.md//)"
+			html_header style.css favicon.ico index.html > "$destdir"/"$filename".html
 			if [ "$filename" != "index" ]; then
-				barentry "$filename.html" "$filename" >> "$HEADER"
-				if [ $blog == 1 ]; then
-					barentry "../$filename.html" "$filename" >> "$BLOGHEADER"
+				barentry "$filename".html "$filename" >> "$header"
+				if [ "$blog" = 1 ]; then
+					barentry ../"$filename".html "$filename" >> "$blogheader"
 				fi
 			fi
 			;;
 
 		*.link)
 			echo "link file found: $file"
-			filename=$(echo "$file" | sed s/.link//)
-			url=$(sed 1q "$SRCDIR/$file")
-			barentry $url "$filename" >> "$HEADER"
-			if [ $blog == 1 ]; then
-				barentry "$url" "$filename" >> "$BLOGHEADER"
+			filename="$(echo "$file" | sed s/.link//)"
+			url="$(sed 1q "$srcdir"/"$file")"
+			barentry "$url" "$filename" >> "$header"
+			if [ "$blog" = 1 ]; then
+				barentry "$url" "$filename" >> "$blogheader"
 			fi
 			;;
 	esac
 
-	if [ $blog == 1 ] && [ $blogentries == 0 ]; then
+	if [ "$blog" = 1 ] && [ "$blogentries" = 0 ]; then
 		echo adding blog to headers
-		mkdir "$DESTDIR/$BLOGDIR"
-		header ../style.css ../favicon.ico ../index.html > \
-			"$DESTDIR/$BLOGDIR/index.html"
-		barentry "$BLOGDIR/index.html" "$BLOGDIR" >> "$HEADER"
-		barentry index.html "$BLOGDIR" >> "$BLOGHEADER"
+		mkdir "$destdir"/"$blogdir"
+		html_header ../style.css ../favicon.ico ../index.html > \
+			"$destdir"/"$blogdir"/index.html
+		barentry "$blogdir"/index.html "$blogdir" >> "$header"
+		barentry index.html "$blogdir" >> "$blogheader"
 		blogentries=1
 	fi
 done 
 
-ls -1 "$SRCDIR" | grep md | sed s/.md// | while read file; do
-	cat "$HEADER" >> "$DESTDIR/$file.html"
-	echo '		</ul>' >> "$DESTDIR/$file.html"
-	echo '\n\n<!--Begin markdown generated content-->\n\n' >> "$DESTDIR/$file.html"
-	$MARKDOWN < $SRCDIR/$file.md >> $DESTDIR/$file.html
-	echo '\n\n<!--End markdown generated content-->\n\n' >> "$DESTDIR/$file.html"
-	footer >> "$DESTDIR/$file.html"
+ls -1 "$srcdir" | grep md | sed s/.md// | while read -r file; do
+	{
+		cat "$header"
+		echo '		</ul>'
+		printf '\n\n<!--Begin markdown generated content-->\n\n'
+		"$MARKDOWN" < "$srcdir"/"$file".md
+		printf '\n\n<!--End markdown generated content-->\n\n'
+		html_footer
+	} >> "$destdir"/"$file".html
 done
 
-if [ $blog = 1 ]; then
-	echo adding header to blog 
-	cat $BLOGHEADER >> "$DESTDIR/$BLOGDIR/index.html"
-	echo '		</ul>' >> "$DESTDIR/$BLOGDIR/index.html"
+if [ "$blog" = 1 ]; then
+	echo adding header to blog
+	cat "$blogheader" >> "$destdir"/"$blogdir"/index.html
+	echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
 
-	if [ "$(ls -A $SRCDIR/$BLOGDIR)" ]; then
+	if [ "$(ls -A "$srcdir"/"$blogdir")" ]; then
 		echo "blog not empty, building posts"
 
 		echo "posts detected:"
-		echo '		<ul id="blogpost">' >> "$DESTDIR/$BLOGDIR/index.html"
-		ls -1r "$SRCDIR/$BLOGDIR" | grep .md | sed s/.md// | while read file; do
-			header ../style.css ../favicon.ico ../index.html > \
-				"$DESTDIR/$BLOGDIR/$file.html"
-			cat "$BLOGHEADER" >> "$DESTDIR/$BLOGDIR/$file.html"
-			posttitle=$(sed 1q "$SRCDIR/$BLOGDIR/$file.md" | sed s/#//)
-			postdate=$(sed -n 2p "$SRCDIR/$BLOGDIR/$file.md")
-			echo "			<li>$postdate - <a href="$file.html">$posttitle</a></li>" >> \
-				"$DESTDIR/$BLOGDIR/index.html"
-
-			echo '		</ul>' >> "$DESTDIR/$BLOGDIR/$file.html"
-			echo "<h1 id="'"posttitle"'">$posttitle</h1>" >> \
-				"$DESTDIR/$BLOGDIR/$file.html"
-			echo "<h2 id="'"postdate"'">Written in: $postdate</h2>" >> \
-				"$DESTDIR/$BLOGDIR/$file.html"
+		echo '		<ul id="blogpost">' >> "$destdir"/"$blogdir"/index.html
+		ls -1r "$srcdir"/"$blogdir" | grep .md | sed s/.md// | while read -r file; do
+			posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$file".md | sed s/#//)"
+			postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$file".md)"
+			echo "			<li>$postdate - <a href=$file.html>$posttitle</a></li>" >> \
+				"$destdir"/"$blogdir"/index.html
+			html_header ../style.css ../favicon.ico ../index.html > \
+				"$destdir"/"$blogdir"/"$file".html
+			{
+				cat "$blogheader"
+				echo '		</ul>'
+				echo "<h1 id=\"posttitle\">$posttitle</h1>"
+				echo "<h2 id=\"postdate\">Written in: $postdate</h2>"
+				printf '\n\n<!--Begin markdown generated content-->\n\n'
+				sed 1,2d "$srcdir"/"$blogdir"/"$file".md | "$MARKDOWN"
+				printf '\n\n<!--End markdown generated content-->\n\n'
+				html_footer
+			} >> "$destdir"/"$blogdir"/"$file".html
 			echo "MARKDOWN: $file"
-			echo '\n\n<!--Begin markdown generated content-->\n\n' >> \
-				"$DESTDIR/$BLOGDIR/$file.html"
-			sed 1,2d $SRCDIR/$BLOGDIR/$file.md | $MARKDOWN >> \
-				"$DESTDIR/$BLOGDIR/$file.html"
-			echo '\n\n<!--End markdown generated content-->\n\n' >> \
-				"$DESTDIR/$BLOGDIR/$file.html"
-			footer >> "$DESTDIR/$BLOGDIR/$file.html"
 		done
-		echo '		</ul>' >> "$DESTDIR/$BLOGDIR/index.html"
+		echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
 	else
-		echo '<p id="warn">No posts yet</p>' >> "$DESTDIR/$BLOGDIR/index.html"
+		echo '<p id="warn">No posts yet</p>' >> "$destdir"/"$blogdir"/index.html
 	fi
-	footer >> "$DESTDIR/$BLOGDIR/index.html"
-	rm $BLOGHEADER
+	html_footer >> "$destdir"/"$blogdir"/index.html
+	rm "$blogheader"
 fi
-	rm "$HEADER"
+	rm "$header"
 	printf '\n'
 	echo "site built"
 	exit 0
