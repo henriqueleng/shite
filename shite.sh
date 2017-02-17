@@ -107,7 +107,7 @@ if [ $PFLAG ]; then # continue pflag
 	EDITOR="$(printenv EDITOR)"
 
 	if [ "$EDITOR" = "" ]; then
-		die "no '$EDITOR', set it to use this function"
+		die 'no $EDITOR, set it to use this function'
 	fi
 
 	number="$(ls -1 "$srcdir"/"$blogdir" | wc -l )"
