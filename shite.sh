@@ -116,7 +116,7 @@ if [ $PFLAG ]; then # continue pflag
 	read -r title
 	date="$(date "+%Y/%m/%d")"
 
-	filename="$(("$number" + 1))-$(echo "$title" | sed s/' '/'-'/g)"
+	filename="$(expr "$number" + 1)-$(echo "$title" | sed s/' '/'-'/g)"
 
 	cat <<!__EOF__ >> "$srcdir"/"$blogdir"/"$filename".md
 # $title
