@@ -1,10 +1,19 @@
 shite - simple static site generator in posix shell
 ---------------------------------------------------
 
+Installation
+------------
+
+Edit Makefile and run
+    # make install
+
+Usage
+-----
+
 **shite** is a simple script to help generating a static webpage. Made for
 personal use, it has a pretty simple usage, and no extra functionality.
 It reads from a source dir and write to a destination dir. You can start
-your website source from examplesite/.
+your website from examplesite/.
 
 shite is made in a way to don't remove any power from command line tools and
 still let the user do manual job. Since shite will never delete any file or
@@ -20,6 +29,6 @@ and shite will never touch it, only update the html files.
 And example of usage can be seen here: https://github.com/henriqueleng/henriqueleng.github.io
 
 If you need any extra feature, you will need to touch the script and implement yourself.
-Thats how shite was buil.
+Thats how shite was built.
 
 Please also read the manpage.
