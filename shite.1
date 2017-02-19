@@ -6,7 +6,6 @@
 .Nd posix shell, static webpages generator
 .Sh SYNOPSIS
 .Nm
-.Op Fl p
 .Ar SRCDIR
 .Ar DESTDIR
 .Sh DESCRIPTION
@@ -19,15 +18,6 @@ pages.  It is a very static program, offering little easy customization of the
 final product. It will point all you pages to a "style.css" and "favicon.ico" on the
 main directory. With style.css you can customize your website, there is a working 
 example on shite sources, just copy the file to the folder of your website.
-.Sh OPTIONS
-.Bl -tag -width Ds
-.It Fl p
-Create a blogpost. It will ask for a title, get the date and open your editor on the
-new post file. With this option you only need to specify the SRCDIR, if there isn't
-a $BLOGDIR, 
-.Nm
-will create one.
-.El
 .Sh ENVIRONMENT
 .Ev MARKDOWN
 enviroment variable is used to generate html pages.
@@ -53,22 +43,27 @@ write these things in markdown, as done in the example.
 - the blog folder, create it if you want one. If you don't create it, blog will
 not be generated nor linked to the navbar.
 .Pp
-.Pa SRCDIR/blog/n-post-name.md
-- your blogposts, these files needs to follow a specific format, created by -p
-flag. n means a number, this number will say in each time order the posts were
-created. The first line of the file
-.Sy must
-be the name of the post in a <h1> mardown format, like '# Some title', followed
-by the date of the post in the next line. To avoid errors, invoke -p flag.
+.Pa SRCDIR/blog/"Section Name"
+- a folder which will hold your posts. The folder name will be a section on blog index.
+.Pp
+.Pa SRCDIR/blog/"Section Name"/n-post-name.md
+- your blogposts, write in markdown. The first two lines must be the name and the date,
+in this format:
+.Bd -literal -offset left
+# Title
+1234/12/12
+.Ed
+
+the second line is the date of the post. Put a number on the beginning of the name to adjust the order.
 .Sh EXAMPLES
 You can start your site on top of the example site. Copy it to anywhere (or keep 
-it in place), edit shiterc, remove the blogposts or just edit them. After that 
+it in place), edit shiterc. After that 
 run shite to build it, you can point directly to a server dir, for example:
 .Bd -literal -offset left
 .Nm Pa share/mysite /var/www/htdocs/...
 .Pp
-To simplify everything you can add add an alias like 'alias buildsite='shite foo bar''
-or create a script and add it to crontab to automatically build and upload to the server.
+You will need to copy the "style.css" and "favicon.ico" file to the destination 
+dir only once.
 .Sh SHITERC
 Your site 
 .Em must

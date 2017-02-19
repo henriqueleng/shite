@@ -46,21 +46,22 @@ die() {
 if [ "$1" = "-h" ] || [ "$1" = "" ]; then
 	echo usage: "$0" [-p] srcdir destdir
 	exit
+fi
 
-elif [ "$1" = "-p" ]; then
-	if [ "$2" = "" ]; then
-		die "you must specify the srcdir"
-	else
-		srcdir="$2"
-	fi
-		PFLAG=1
+if [ "$2" = "" ]; then
+	die "you must specify a destdir"
 else
-	if [ "$2" = "" ]; then
-		die "you must specify a destdir"
-	else
-		srcdir="$1"
-		destdir="$2"
-	fi
+	srcdir="$1"
+	destdir="$2"
+fi
+
+# test dirs
+# src - allways needed
+if [ ! -d "$srcdir" ]; then
+	die "$srcdir isn't a directory, please check it"
+else
+	srcdir="$(cd "$srcdir" && pwd && cd "$currentdir")"
+	echo source path: "$srcdir"
 fi
 
 # check shiterc
@@ -76,54 +77,13 @@ else
 	die "didn't found shiterc, can't proceed without it"
 fi
 
-
-# test dirs
-# src - allways needed
-if [ ! -d "$srcdir" ]; then
-	die "$srcdir isn't a directory, please check it"
-else
-	srcdir="$(cd "$srcdir" && pwd && cd "$currentdir")"
-	echo source path: "$srcdir"
-fi
-
 # blog
 if [ -d "$srcdir"/"$blogdir" ]; then
 	blog=1
 	blogentries=0
 else
-	if [ $PFLAG ]; then
-		mkdir "$srcdir"/"$blogdir"
-		echo 'there was no blog, created it'
-		blog=1
-	else
-		echo 'no blog, not building it'
-		blog=0
-	fi
-fi
-
-if [ $PFLAG ]; then # continue pflag
-	EDITOR="$(printenv EDITOR)"
-
-	if [ "$EDITOR" = "" ]; then
-		die 'no $EDITOR, set it to use this function'
-	fi
-
-	number="$(ls -1 "$srcdir"/"$blogdir" | wc -l )"
-
-	echo 'Name of the post:'
-	read -r title
-	date="$(date "+%Y/%m/%d")"
-
-	filename="$(expr "$number" + 1)-$(echo "$title" | sed s/' '/'-'/g)"
-
-	cat <<!__EOF__ >> "$srcdir"/"$blogdir"/"$filename".md
-# $title
-$date
-!__EOF__
-	"$EDITOR" "$srcdir"/"$blogdir"/"$filename".md
-
-	echo 'post created. now, build your site'
-	exit 0
+	echo 'no blog, not building it'
+	blog=0
 fi
 
 # check markdown
