@@ -16,8 +16,9 @@ pages, by reading a bunch of markdown files and a simple config file.  Made to
 facilitate blogging, writing and publication of online content, since markdown
 format is almost pure text, it can prevent the author from contact with ugly html
 pages.  It is a very static program, offering little easy customization of the
-final product, to generate anything way different, one will need to edit style.css
-file.
+final product. It will point all you pages to a "style.css" and "favicon.ico" on the
+main directory. With style.css you can customize your website, you can get a working
+ example of css using shite tags on henriqueleng.github.io
 .Sh OPTIONS
 .Bl -tag -width Ds
 .It Fl p
@@ -47,11 +48,6 @@ to the site you write in the first line of it.
 .Pa SRCDIR/shiterc
 - the basic site configuration, where you set the title, subtitle, and footer text,
 write these things in markdown, as done in the example.
-.Pp
-.Pa SRCDIR/favicon.ico
-- the icon of your site,
-.Nm
-will copy it to DESTDIR.
 .Pp
 .Pa SRCDIR/blog/
 - the blog folder, create it if you want one. If you don't create it, blog will
