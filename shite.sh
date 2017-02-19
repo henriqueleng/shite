@@ -1,5 +1,4 @@
 #!/bin/sh
-cssfile='style.css'
 currentdir="$(pwd)"
 html_header() { #$1 = css location, $2 favicon location, $3 index location
 cat <<!__EOF__
@@ -143,18 +142,16 @@ else
 fi
 
 # main
-
 mkdir -p "$destdir"
 destdir="$(cd "$destdir" && pwd && cd "$currentdir")"
 echo "destination path: $destdir"
 
 touch "$destdir"/index.html
-cp "$srcdir"/"$cssfile" "$destdir"
-cp "$srcdir"/favicon.ico "$destdir"
 
 header="$(mktemp shite-header.XXXXXX)"
 
-# check if blog exists so create a header to it
+echo "$destdir"/"$blogdir"
+
 if [ "$blog" = 1 ]; then
 	blogheader="$(mktemp -t shite-blogheader.XXXXXX)"
 	if [ "$(ls -A "$srcdir"/"$blogdir")" ]; then
@@ -162,7 +159,6 @@ if [ "$blog" = 1 ]; then
 		# create header for files on level deeper (on folders)
 		blogheader2="$(mktemp -t shite-blogheader2.XXXXXX)"
 	else
-		echo '<p id="warn">No posts yet</p>' >> "$destdir"/"$blogdir"/index.html
 		blogfiles=0
 	fi
 fi
@@ -257,31 +253,17 @@ if [ "$blog" = 1 ]; then
 							printf '\n\n<!--End markdown generated content-->\n\n'
 							html_footer
 						} > "$destdir"/"$blogdir"/"$section"/"$file".html
+						echo "\tMARKDOWN: $section/$file"
 						;;
 					esac
 				done
 			else
 				echo "<p>Nothing on this category</p>" >> "$destdir"/"$blogdir"/index.html
 			fi
-#				posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$file".md | sed s/#//)"
-#				postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$file".md)"
-#				echo "			<li>$postdate - <a href=$file.html>$posttitle</a></li>" >> \
-#					"$destdir"/"$blogdir"/index.html
-#				html_header ../style.css ../favicon.ico ../index.html > \
-#					"$destdir"/"$blogdir"/"$file".html
-#				{
-#					cat "$blogheader"
-#					echo '		</ul>'
-#					echo "<h1 id=\"posttitle\">$posttitle</h1>"
-#					echo "<h2 id=\"postdate\">Written in: $postdate</h2>"
-#					printf '\n\n<!--Begin markdown generated content-->\n\n'
-#					sed 1,2d "$srcdir"/"$blogdir"/"$file".md | "$MARKDOWN"
-#					printf '\n\n<!--End markdown generated content-->\n\n'
-#					html_footer
-#				} >> "$destdir"/"$blogdir"/"$file".html
-#				echo "\tMARKDOWN: $file"
 	done
 		echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
+	else
+		echo "<p id=\"warn\">There's nothing here, yet</p>" >> "$destdir"/"$blogdir"/index.html
 	fi
 	html_footer >> "$destdir"/"$blogdir"/index.html
 	rm "$blogheader"
