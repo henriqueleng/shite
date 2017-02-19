@@ -90,7 +90,6 @@ fi
 # blog
 if [ -d "$srcdir"/"$blogdir" ]; then
 	blog=1
-	blogheader="$(mktemp -t shite-blogheader.XXXXXX)"
 	blogentries=0
 else
 	if [ $PFLAG ]; then
@@ -143,6 +142,8 @@ else
 	fi
 fi
 
+# main
+
 mkdir -p "$destdir"
 destdir="$(cd "$destdir" && pwd && cd "$currentdir")"
 echo "destination path: $destdir"
@@ -153,7 +154,35 @@ cp "$srcdir"/favicon.ico "$destdir"
 
 header="$(mktemp shite-header.XXXXXX)"
 
+# check if blog exists so create a header to it
+if [ "$blog" = 1 ]; then
+	blogheader="$(mktemp -t shite-blogheader.XXXXXX)"
+	if [ "$(ls -A "$srcdir"/"$blogdir")" ]; then
+		blogfiles=1
+		# create header for files on level deeper (on folders)
+		blogheader2="$(mktemp -t shite-blogheader2.XXXXXX)"
+	else
+		echo '<p id="warn">No posts yet</p>' >> "$destdir"/"$blogdir"/index.html
+		blogfiles=0
+	fi
+fi
+
 ls -1 "$srcdir" | while read -r file; do
+	if [ "$blog" = 1 ] && [ "$blogentries" = 0 ]; then
+		echo adding blog to headers
+		mkdir "$destdir"/"$blogdir"
+		html_header ../style.css ../favicon.ico ../index.html > \
+			"$destdir"/"$blogdir"/index.html
+		barentry "$blogdir"/index.html "$blogdir" >> "$header"
+		barentry index.html "$blogdir" >> "$blogheader"
+		if [ "$blogfiles" = 1 ]; then
+			html_header ../../style.css ../../favicon.ico ../../index.html > \
+			"$blogheader2"
+			barentry ../index.html "$blogdir" >> "$blogheader2"
+		fi
+		blogentries=1
+	fi
+
 	case "$file" in
 		*.md)
 			filename="$(echo "$file" | sed s/.md//)"
@@ -162,6 +191,9 @@ ls -1 "$srcdir" | while read -r file; do
 				barentry "$filename".html "$filename" >> "$header"
 				if [ "$blog" = 1 ]; then
 					barentry ../"$filename".html "$filename" >> "$blogheader"
+				fi
+				if [ "$blogfiles" = 1 ]; then
+					barentry ../../"$filename".html "$filename" >> "$blogheader2"
 				fi
 			fi
 			;;
@@ -174,18 +206,11 @@ ls -1 "$srcdir" | while read -r file; do
 			if [ "$blog" = 1 ]; then
 				barentry "$url" "$filename" >> "$blogheader"
 			fi
+			if [ "$blogfiles" = 1 ]; then
+				barentry "$url" "$filename" >> "$blogheader2"
+			fi
 			;;
 	esac
-
-	if [ "$blog" = 1 ] && [ "$blogentries" = 0 ]; then
-		echo adding blog to headers
-		mkdir "$destdir"/"$blogdir"
-		html_header ../style.css ../favicon.ico ../index.html > \
-			"$destdir"/"$blogdir"/index.html
-		barentry "$blogdir"/index.html "$blogdir" >> "$header"
-		barentry index.html "$blogdir" >> "$blogheader"
-		blogentries=1
-	fi
 done 
 
 ls -1 "$srcdir" | grep md | sed s/.md// | while read -r file; do
@@ -200,37 +225,63 @@ ls -1 "$srcdir" | grep md | sed s/.md// | while read -r file; do
 done
 
 if [ "$blog" = 1 ]; then
-	echo adding header to blog
 	cat "$blogheader" >> "$destdir"/"$blogdir"/index.html
 	echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
 
-	if [ "$(ls -A "$srcdir"/"$blogdir")" ]; then
-		echo "blog not empty, building posts"
-
-		echo "posts detected:"
+	if [ "$blogfiles" = 1 ]; then
 		echo '		<ul id="blogpost">' >> "$destdir"/"$blogdir"/index.html
-		ls -1r "$srcdir"/"$blogdir" | grep .md | sed s/.md// | while read -r file; do
-			posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$file".md | sed s/#//)"
-			postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$file".md)"
-			echo "			<li>$postdate - <a href=$file.html>$posttitle</a></li>" >> \
-				"$destdir"/"$blogdir"/index.html
-			html_header ../style.css ../favicon.ico ../index.html > \
-				"$destdir"/"$blogdir"/"$file".html
-			{
-				cat "$blogheader"
-				echo '		</ul>'
-				echo "<h1 id=\"posttitle\">$posttitle</h1>"
-				echo "<h2 id=\"postdate\">Written in: $postdate</h2>"
-				printf '\n\n<!--Begin markdown generated content-->\n\n'
-				sed 1,2d "$srcdir"/"$blogdir"/"$file".md | "$MARKDOWN"
-				printf '\n\n<!--End markdown generated content-->\n\n'
-				html_footer
-			} >> "$destdir"/"$blogdir"/"$file".html
-			echo "\tMARKDOWN: $file"
-		done
+
+		# read and link section by section
+		find "$srcdir"/"$blogdir" -type d ! -name "$blogdir" | sed 's#.*/##' | \
+		while read section; do
+			echo "<h2 id=\"section\">$section</h2>" >> "$destdir"/"$blogdir"/index.html
+			# if section have files
+			if [ "$(ls -A "$srcdir"/"$blogdir"/"$section")" ]; then
+				mkdir -p "$destdir"/"$blogdir"/"$section"
+				ls -1rF "$srcdir"/"$blogdir"/"$section" | while read -r file; do
+					case "$file" in
+						*.md)
+							file="$(echo $file | sed s/.md//)"
+							posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$section"/"$file".md | sed s/#//)"
+							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".md)"
+							echo "          <li>$postdate - <a href=\""$section"/"$file".html\">$posttitle</a></li>" >> \
+								"$destdir"/"$blogdir"/index.html
+							touch "$destdir"/"$blogdir"/"$section"/"$file".html
+						{
+							cat "$blogheader2"
+							echo '		</ul>'
+							echo "<h1 id=\"posttitle\">$posttitle</h1>"
+							echo "<h2 id=\"postdate\">Written in: $postdate</h2>"
+							printf '\n\n<!--Begin markdown generated content-->\n\n'
+							sed 1,2d "$srcdir"/"$blogdir"/"$section"/"$file".md | "$MARKDOWN"
+							printf '\n\n<!--End markdown generated content-->\n\n'
+							html_footer
+						} > "$destdir"/"$blogdir"/"$section"/"$file".html
+						;;
+					esac
+				done
+			else
+				echo "<p>Nothing on this category</p>" >> "$destdir"/"$blogdir"/index.html
+			fi
+#				posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$file".md | sed s/#//)"
+#				postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$file".md)"
+#				echo "			<li>$postdate - <a href=$file.html>$posttitle</a></li>" >> \
+#					"$destdir"/"$blogdir"/index.html
+#				html_header ../style.css ../favicon.ico ../index.html > \
+#					"$destdir"/"$blogdir"/"$file".html
+#				{
+#					cat "$blogheader"
+#					echo '		</ul>'
+#					echo "<h1 id=\"posttitle\">$posttitle</h1>"
+#					echo "<h2 id=\"postdate\">Written in: $postdate</h2>"
+#					printf '\n\n<!--Begin markdown generated content-->\n\n'
+#					sed 1,2d "$srcdir"/"$blogdir"/"$file".md | "$MARKDOWN"
+#					printf '\n\n<!--End markdown generated content-->\n\n'
+#					html_footer
+#				} >> "$destdir"/"$blogdir"/"$file".html
+#				echo "\tMARKDOWN: $file"
+	done
 		echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
-	else
-		echo '<p id="warn">No posts yet</p>' >> "$destdir"/"$blogdir"/index.html
 	fi
 	html_footer >> "$destdir"/"$blogdir"/index.html
 	rm "$blogheader"
