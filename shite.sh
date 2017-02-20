@@ -126,7 +126,7 @@ fi
 ls -1 "$srcdir" | while read -r file; do
 	if [ "$blog" = 1 ] && [ "$blogentries" = 0 ]; then
 		echo adding blog to headers
-		mkdir "$destdir"/"$blogdir"
+		mkdir -p "$destdir"/"$blogdir"
 		html_header ../style.css ../favicon.ico ../index.html > \
 			"$destdir"/"$blogdir"/index.html
 		barentry "$blogdir"/index.html "$blogdir" >> "$header"
