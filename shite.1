@@ -67,8 +67,10 @@ dir only once.
 .Sh SHITERC
 Your site 
 .Em must
-have a shiterc file on it, this file will contain the TITLE, SUBTITLE, FOOTER
-and BLOGDIR info of your site.
+have a shiterc file on it, this file will contain the "title", "subtitle", "footer"
+and "blogdir" info of your site. You can add a file with some script (e.g. disquss)
+on SRCDIR and point that file on shiterc with the variable "comment_script", this 
+script will be on the footer of all your BLOGDIR pages. 
 You can ignore BLOGDIR if you don't have one. You can set BLOGDIR to anything
 you want the page with your articles to be called.
 .Ed

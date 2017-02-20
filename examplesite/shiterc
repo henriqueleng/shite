@@ -2,3 +2,4 @@ title='Sample Title'
 subtitle='Subtitle'
 footer='Hosted in [Github](http://github.com)'
 blogdir='posts'
+comment_script="disquss.html"
