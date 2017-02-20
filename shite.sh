@@ -199,7 +199,8 @@ if [ "$blog" = 1 ]; then
 			echo "<h2 id=\"section\">$section</h2>" >> "$destdir"/"$blogdir"/index.html
 			# if section have files
 			if [ "$(ls -A "$srcdir"/"$blogdir"/"$section")" ]; then
-				mkdir -p "$destdir"/"$blogdir"/"$section"
+				section_dest="$(echo "$section" | sed s/\ /_/g)"
+				mkdir -p "$destdir"/"$blogdir"/"$section_dest"
 				ls -1rF "$srcdir"/"$blogdir"/"$section" | while read -r file; do
 					case "$file" in
 						*.md)
@@ -208,7 +209,7 @@ if [ "$blog" = 1 ]; then
 							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".md)"
 							echo "          <li>$postdate - <a href=\""$section"/"$file".html\">$posttitle</a></li>" >> \
 								"$destdir"/"$blogdir"/index.html
-							touch "$destdir"/"$blogdir"/"$section"/"$file".html
+							touch "$destdir"/"$blogdir"/"$section_dest"/"$file".html
 						{
 							cat "$blogheader2"
 							echo '		</ul>'
@@ -220,7 +221,7 @@ if [ "$blog" = 1 ]; then
 							if [ "$comment_script" ]; then
 								html_footer yes
 							fi
-						} > "$destdir"/"$blogdir"/"$section"/"$file".html
+						} > "$destdir"/"$blogdir"/"$section_dest"/"$file".html
 						echo "\tMARKDOWN: $section/$file"
 						;;
 					esac
