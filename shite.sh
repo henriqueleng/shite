@@ -207,7 +207,7 @@ if [ "$blog" = 1 ]; then
 							file="$(echo $file | sed s/.md//)"
 							posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$section"/"$file".md | sed s/#//)"
 							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".md)"
-							echo "          <li>$postdate - <a href=\""$section"/"$file".html\">$posttitle</a></li>" >> \
+							echo "          <li>$postdate - <a href=\""$section_dest"/"$file".html\">$posttitle</a></li>" >> \
 								"$destdir"/"$blogdir"/index.html
 							touch "$destdir"/"$blogdir"/"$section_dest"/"$file".html
 						{
