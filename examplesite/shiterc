@@ -2,4 +2,7 @@ title='Sample Title'
 subtitle='Subtitle'
 footer='Hosted in [Github](http://github.com)'
 blogdir='posts'
-comment_script="disquss.html"
+
+# point to a file whose content will be placed on the footer
+# of each post. disqus script.
+comment_script="disqus.html"
