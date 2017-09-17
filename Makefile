@@ -16,8 +16,10 @@ $(BIN):
 install: clean all
 	mkdir -p $(BINDIR) 
 	cp -f $(BIN) $(BINDIR)
+	chmod 755 $(BINDIR)/$(BIN)
 	mkdir -p $(MAN1DIR)
 	cp -f $(MANPAGE) $(MAN1DIR) 
+	chmod 644 $(MAN1DIR)/$(MANPAGE)
 
 uninstall:
 	@rm -f ${MAN1DIR}/${MANPAGE}
