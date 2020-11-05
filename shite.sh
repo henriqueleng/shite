@@ -224,6 +224,16 @@ if [ "$blog" = 1 ]; then
 						} > "$destdir"/"$blogdir"/"$section_dest"/"$file".html
 						echo "\tMARKDOWN: $section/$file"
 						;;
+						*.link)
+							file="$(echo $file | sed s/.link//)"
+							echo link file found: "$file"
+							posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$section"/"$file".link | sed s/#//)"
+							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".link)"
+							postlink="$(sed -n 3p "$srcdir"/"$blogdir"/"$section"/"$file".link)"
+							echo LINK POST  $postlink
+							echo "          <li>$postdate - <a href=\""$postlink"\">$posttitle</a></li>" >> \
+								"$destdir"/"$blogdir"/index.html
+						;;
 					esac
 				done
 			else
