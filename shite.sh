@@ -201,7 +201,7 @@ if [ "$blog" = 1 ]; then
 			if [ "$(ls -A "$srcdir"/"$blogdir"/"$section")" ]; then
 				section_dest="$(echo "$section" | sed s/\ /_/g)"
 				mkdir -p "$destdir"/"$blogdir"/"$section_dest"
-				ls -1rF "$srcdir"/"$blogdir"/"$section" | while read -r file; do
+				ls -1r "$srcdir"/"$blogdir"/"$section" | while read -r file; do
 					case "$file" in
 						*.md)
 							file="$(echo $file | sed s/.md//)"
