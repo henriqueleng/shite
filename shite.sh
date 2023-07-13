@@ -49,7 +49,7 @@ die() {
 
 # PARSE FLAGS AND FOLDERS
 if [ "$1" = "-h" ] || [ "$1" = "" ]; then
-	echo usage: "$0" [-p] srcdir destdir
+	echo usage: "$0" srcdir destdir
 	exit
 fi
 
