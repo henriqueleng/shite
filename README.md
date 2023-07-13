@@ -11,9 +11,9 @@ Quick Start
 -----------
 
 Create an empty folder, where your website files will be placed:  
-``` $ mkdir destdir ```  
+``` $ mkdir destdir ```
 Run shite to build the pages:  
-``` $ shite examplesite destdir ```  
+``` $ shite examplesite/ destdir/ ```
 
 This will build your site into "destdir/".  
 Now you just need to copy the files "favicon.ico",
