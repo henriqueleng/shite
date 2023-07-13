@@ -147,7 +147,7 @@ ls -1 "$srcdir" | while read -r file; do
 
 	case "$file" in
 		*.md)
-			filename="$(echo "$file" | sed s/.md//)"
+			filename="$(echo "$file" | sed 's/\.md//')"
 			html_header style.css favicon.ico index.html > "$destdir"/"$filename".html
 			if [ "$filename" != "index" ]; then
 				barentry "$filename".html "$filename" >> "$header"
@@ -162,7 +162,7 @@ ls -1 "$srcdir" | while read -r file; do
 
 		*.link)
 			echo "link file found: $file"
-			filename="$(echo "$file" | sed s/.link//)"
+			filename="$(echo "$file" | sed 's/\.link//')"
 			url="$(sed 1q "$srcdir"/"$file")"
 			barentry "$url" "$filename" >> "$header"
 			if [ "$blog" = 1 ]; then
@@ -175,7 +175,7 @@ ls -1 "$srcdir" | while read -r file; do
 	esac
 done 
 
-ls -1 "$srcdir" | grep md | sed s/.md// | while read -r file; do
+ls -1 "$srcdir" | grep md | sed 's/\.md//' | while read -r file; do
 	{
 		cat "$header"
 		echo '		</ul>'
@@ -204,7 +204,7 @@ if [ "$blog" = 1 ]; then
 				ls -1r "$srcdir"/"$blogdir"/"$section" | while read -r file; do
 					case "$file" in
 						*.md)
-							file="$(echo $file | sed s/.md//)"
+							file="$(echo $file | sed 's/\.md//')"
 							posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$section"/"$file".md | sed s/#//)"
 							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".md)"
 							echo "          <li>$postdate - <a href=\""$section_dest"/"$file".html\">$posttitle</a></li>" >> \
@@ -225,7 +225,7 @@ if [ "$blog" = 1 ]; then
 						echo "\tMARKDOWN: $section/$file"
 						;;
 						*.link)
-							file="$(echo $file | sed s/.link//)"
+							file="$(echo $file | sed 's/\.link//')"
 							echo link file found: "$file"
 							posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$section"/"$file".link | sed s/#//)"
 							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".link)"
