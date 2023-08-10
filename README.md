@@ -28,7 +28,7 @@ Now you just need to copy the files "favicon.ico",
 "disquss.html" and "style.css" to destdir/. You only need to do this once. 
 
 Everytime you update the source files you just run shite again to update 
-the webpage. If you delete any file in the source, you'll have to mannually 
+the webpage. If you delete any file in the source, you'll have to manually
 delete them from destdir.
 
 
