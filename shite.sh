@@ -1,5 +1,8 @@
 #!/bin/sh
 currentdir="$(pwd)"
+
+# -- BEGIN FUNCTIONS
+
 html_header() { #$1 = css location, $2 favicon location, $3 index location
 cat <<!__EOF__
 <!DOCTYPE html>
@@ -48,7 +51,7 @@ die() {
 }
 
 # PARSE FLAGS AND FOLDERS
-if [ "$1" = "-h" ] || [ "$1" = "" ]; then
+if [ "$1" = "-h" -o "$1" = "" ]; then
 	echo usage: "$0" srcdir destdir
 	exit
 fi
@@ -60,7 +63,7 @@ else
 	destdir="$2"
 fi
 
-# test dirs
+# test directories
 # src - allways needed
 if [ ! -d "$srcdir" ]; then
 	die "$srcdir isn't a directory, please check it"
@@ -83,7 +86,7 @@ else
 	die "didn't found shiterc, can't proceed without it"
 fi
 
-# blog
+# check if blog
 if [ -d "$srcdir"/"$blogdir" ]; then
 	blog=1
 	blogentries=0
@@ -138,8 +141,8 @@ ls -1 "$srcdir" | while read -r file; do
 		barentry "$blogdir"/index.html "$blogdir" >> "$header"
 		barentry index.html "$blogdir" >> "$blogheader"
 		if [ "$blogfiles" = 1 ]; then
-			html_header ../../style.css ../../favicon.ico ../../index.html > \
-			"$blogheader2"
+			html_header ../../style.css ../../favicon.ico \
+				../../index.html > "$blogheader2"
 			barentry ../index.html "$blogdir" >> "$blogheader2"
 		fi
 		blogentries=1
