@@ -117,7 +117,7 @@ echo "destination path: $destdir"
 
 touch "$destdir"/index.html
 
-header="$(mktemp shite-header.XXXXXX)"
+header="$(mktemp -t shite-header.XXXXXX)"
 
 echo "$destdir"/"$blogdir"
 
