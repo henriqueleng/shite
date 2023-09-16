@@ -132,7 +132,8 @@ if [ "$blog" = 1 ]; then
 	fi
 fi
 
-ls -1 "$srcdir" | while read -r file; do
+cd "$srcdir"
+for file in *; do
 	if [ "$blog" = 1 ] && [ "$blogentries" = 0 ]; then
 		echo adding blog to headers
 		mkdir -p "$destdir"/"$blogdir"
@@ -178,6 +179,7 @@ ls -1 "$srcdir" | while read -r file; do
 	esac
 done 
 
+# still in srcdir
 cd "$srcdir"
 
 for file in *.md; do
@@ -209,7 +211,12 @@ if [ "$blog" = 1 ]; then
 			if [ "$(ls -A "$srcdir"/"$blogdir"/"$section")" ]; then
 				section_dest="$(echo "$section" | sed s/\ /_/g)"
 				mkdir -p "$destdir"/"$blogdir"/"$section_dest"
-				ls -1r "$srcdir"/"$blogdir"/"$section" | while read -r file; do
+
+				# change dir to list
+				cd "$srcdir"/"$blogdir"/"$section"
+
+				# list files in reverse order, so newer posts stay on top
+				for f in *; do echo "$f"; done | sort -r | while read -r file; do
 					case "$file" in
 						*.md)
 							file="$(echo $file | sed 's/\.md//')"
@@ -232,6 +239,7 @@ if [ "$blog" = 1 ]; then
 						} > "$destdir"/"$blogdir"/"$section_dest"/"$file".html
 						echo "\tMARKDOWN: $section/$file"
 						;;
+
 						*.link)
 							file="$(echo $file | sed 's/\.link//')"
 							echo link file found: "$file"
@@ -244,8 +252,9 @@ if [ "$blog" = 1 ]; then
 						;;
 					esac
 				done
+				cd "$currentdir"
 			else
-				echo "<p>Nothing on this category</p>" >> "$destdir"/"$blogdir"/index.html
+				echo '<p>Nothing on this category</p>' >> "$destdir"/"$blogdir"/index.html
 			fi
 	done
 		echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
