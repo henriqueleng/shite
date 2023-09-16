@@ -192,6 +192,8 @@ for file in *.md; do
 	} >> "$destdir"/"$file".html
 done
 
+cd "$currentdir"
+
 if [ "$blog" = 1 ]; then
 	cat "$blogheader" >> "$destdir"/"$blogdir"/index.html
 	echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
