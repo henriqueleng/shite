@@ -178,7 +178,10 @@ ls -1 "$srcdir" | while read -r file; do
 	esac
 done 
 
-ls -1 "$srcdir" | grep md | sed 's/\.md//' | while read -r file; do
+cd "$srcdir"
+
+for file in *.md; do
+	file="$(echo "$file" | sed 's/\.md$//')"
 	{
 		cat "$header"
 		echo '		</ul>'
