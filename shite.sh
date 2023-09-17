@@ -76,12 +76,15 @@ fi
 if [ -f "$srcdir"/shiterc ]; then
 	echo 'found shiterc, parsing it'
 	. "$srcdir"/shiterc
-	echo parsed from "$srcdir""shiterc":
-	echo "\ttitle: $title"
-	echo "\tsubtitle: $subtitle"
-	echo "\tfooter: $footer"
-	echo "\tblogdir: $blogdir"
-	echo "\tcomment script: $comment_script"
+
+	cat << EOF
+parsed from $srcdir/shiterc:
+	title: $title
+	subtitle: $subtitle
+	footer: $footer
+	blogdir: $blogdir
+	comment script: $comment_script
+EOF
 else
 	die "didn't found shiterc, can't proceed without it"
 fi
