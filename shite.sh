@@ -86,7 +86,7 @@ parsed from $srcdir/shiterc:
 	comment script: $comment_script
 EOF
 else
-	die "didn't found shiterc, can't proceed without it"
+	die "shiterc not found, can't proceed without it"
 fi
 
 # check if blog
@@ -101,7 +101,7 @@ fi
 # check markdown
 MARKDOWN="$(printenv MARKDOWN)"
 if [ "$MARKDOWN" = "" ]; then
-	die "couldn't build site, markdown processor not found: set MARKDOWN"
+	die "can't build site, markdown processor not found: set MARKDOWN"
 else
 	if type "$MARKDOWN" >/dev/null 2>&1; then
 		echo "markdown processor: $MARKDOWN"
@@ -135,6 +135,7 @@ if [ "$blog" = 1 ]; then
 	fi
 fi
 
+# create the navigation bar entries, for all the pages that may come
 cd "$srcdir"
 for file in *; do
 	if [ "$blog" = 1 ] && [ "$blogentries" = 0 ]; then
