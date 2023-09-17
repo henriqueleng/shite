@@ -125,10 +125,11 @@ header="$(mktemp -t shite-header.XXXXXX)"
 echo "$destdir"/"$blogdir"
 
 if [ "$blog" = 1 ]; then
+	# this is the header of the blog index
 	blogheader="$(mktemp -t shite-blogheader.XXXXXX)"
 	if [ "$(ls -A "$srcdir"/"$blogdir")" ]; then
 		blogfiles=1
-		# create header for files on level deeper (on folders)
+		# create header for files on level deeper (blogposts)
 		blogheader2="$(mktemp -t shite-blogheader2.XXXXXX)"
 	else
 		blogfiles=0
