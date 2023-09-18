@@ -74,7 +74,6 @@ fi
 
 # check shiterc
 if [ -f "$srcdir"/shiterc ]; then
-	echo 'found shiterc, parsing it'
 	. "$srcdir"/shiterc
 
 	cat << EOF
@@ -104,7 +103,7 @@ if [ "$MARKDOWN" = "" ]; then
 	die "can't build site, markdown processor not found: set MARKDOWN"
 else
 	if type "$MARKDOWN" >/dev/null 2>&1; then
-		echo "markdown processor: $MARKDOWN"
+		echo "markdown: $MARKDOWN"
 		title="$(echo "$title" | "$MARKDOWN" | sed 's/<[^a>]*>//g')"
 		subtitle="$(echo "$subtitle" | "$MARKDOWN" | sed 's/<[^a>]*>//g')"
 		footer="$(echo "$footer" | "$MARKDOWN" | sed 's/<[^a>]*>//g')"
@@ -121,8 +120,6 @@ echo "destination path: $destdir"
 touch "$destdir"/index.html
 
 header="$(mktemp -t shite-header.XXXXXX)"
-
-echo "$destdir"/"$blogdir"
 
 if [ "$blog" = 1 ]; then
 	# this is the header of the blog index
