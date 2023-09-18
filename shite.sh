@@ -181,6 +181,7 @@ done
 # still in srcdir
 cd "$srcdir"
 
+# process markdown
 for file in *.md; do
 	file="$(echo "$file" | sed 's/\.md$//')"
 	{
