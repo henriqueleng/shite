@@ -120,6 +120,7 @@ touch "$destdir"/index.html
 
 header="$(mktemp -t shite-header.XXXXXX)"
 
+# generate indexes and navigation bar for blog and blogposts
 if [ "$blog" = 1 ]; then
 	# this is the header of the blog index
 	blogheader="$(mktemp -t shite-blogheader.XXXXXX)"
@@ -130,16 +131,17 @@ if [ "$blog" = 1 ]; then
 	else
 		blogfiles=0
 	fi
-	echo adding blog to headers
+
 	mkdir -p "$destdir"/"$blogdir"
-	html_header ../style.css ../favicon.ico ../index.html > \
-		"$destdir"/"$blogdir"/index.html
-	barentry "$blogdir"/index.html "$blogdir" >> "$header"
+	# create header of blog index
+	html_header ../style.css ../favicon.ico ../index.html > "$blogheader"
 	barentry index.html "$blogdir" >> "$blogheader"
+	# add blog link to site index
+	barentry "$blogdir"/index.html "$blogdir" >> "$header"
 	if [ "$blogfiles" = 1 ]; then
 		html_header ../../style.css ../../favicon.ico \
-		../../index.html > "$blogheader2"
-			barentry ../index.html "$blogdir" >> "$blogheader2"
+			../../index.html > "$blogheader2"
+		barentry ../index.html "$blogdir" >> "$blogheader2"
 	fi
 fi
 
@@ -194,7 +196,7 @@ done
 cd "$currentdir"
 
 if [ "$blog" = 1 ]; then
-	cat "$blogheader" >> "$destdir"/"$blogdir"/index.html
+	cat "$blogheader" > "$destdir"/"$blogdir"/index.html
 	echo '		</ul>' >> "$destdir"/"$blogdir"/index.html
 
 	if [ "$blogfiles" = 1 ]; then
