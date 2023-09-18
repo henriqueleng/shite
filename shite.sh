@@ -91,7 +91,6 @@ fi
 # check if blog
 if [ -d "$srcdir"/"$blogdir" ]; then
 	blog=1
-	blogentries=0
 else
 	echo 'no blog, not building it'
 	blog=0
@@ -131,26 +130,22 @@ if [ "$blog" = 1 ]; then
 	else
 		blogfiles=0
 	fi
+	echo adding blog to headers
+	mkdir -p "$destdir"/"$blogdir"
+	html_header ../style.css ../favicon.ico ../index.html > \
+		"$destdir"/"$blogdir"/index.html
+	barentry "$blogdir"/index.html "$blogdir" >> "$header"
+	barentry index.html "$blogdir" >> "$blogheader"
+	if [ "$blogfiles" = 1 ]; then
+		html_header ../../style.css ../../favicon.ico \
+		../../index.html > "$blogheader2"
+			barentry ../index.html "$blogdir" >> "$blogheader2"
+	fi
 fi
 
 # create the navigation bar entries, for all the pages that may come
 cd "$srcdir"
 for file in *; do
-	if [ "$blog" = 1 ] && [ "$blogentries" = 0 ]; then
-		echo adding blog to headers
-		mkdir -p "$destdir"/"$blogdir"
-		html_header ../style.css ../favicon.ico ../index.html > \
-			"$destdir"/"$blogdir"/index.html
-		barentry "$blogdir"/index.html "$blogdir" >> "$header"
-		barentry index.html "$blogdir" >> "$blogheader"
-		if [ "$blogfiles" = 1 ]; then
-			html_header ../../style.css ../../favicon.ico \
-				../../index.html > "$blogheader2"
-			barentry ../index.html "$blogdir" >> "$blogheader2"
-		fi
-		blogentries=1
-	fi
-
 	case "$file" in
 		*.md)
 			filename="$(echo "$file" | sed 's/\.md//')"
