@@ -265,6 +265,10 @@ if [ "$blog" = 1 ]; then
 	rm "$blogheader"
 fi
 	rm "$header"
+	if [ "$blogfiles" = 1 ]; then
+		rm "$blogheader2"
+	fi
+
 	printf '\n'
 	echo "site built"
 	exit 0
