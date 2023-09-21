@@ -219,7 +219,7 @@ if [ "$blog" = 1 ]; then
 				for f in *; do echo "$f"; done | sort -r | while read -r file; do
 					case "$file" in
 						*.md)
-							file="$(echo $file | sed 's/\.md//')"
+							file="$(echo "$file" | sed 's/\.md//')"
 							posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$section"/"$file".md | sed s/#//)"
 							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".md)"
 							echo "          <li>$postdate - <a href=\""$section_dest"/"$file".html\">$posttitle</a></li>" >> \
@@ -241,7 +241,7 @@ if [ "$blog" = 1 ]; then
 						;;
 
 						*.link)
-							file="$(echo $file | sed 's/\.link//')"
+							file="$(echo "$file" | sed 's/\.link//')"
 							echo link file found: "$file"
 							posttitle="$(sed 1q "$srcdir"/"$blogdir"/"$section"/"$file".link | sed s/#//)"
 							postdate="$(sed -n 2p "$srcdir"/"$blogdir"/"$section"/"$file".link)"
