@@ -237,7 +237,7 @@ if [ "$blog" = 1 ]; then
 								html_footer yes
 							fi
 						} > "$destdir"/"$blogdir"/"$section_dest"/"$file".html
-						echo "\tMARKDOWN: $section/$file"
+						printf "\tMARKDOWN: $section/$file"'\n'
 						;;
 
 						*.link)
